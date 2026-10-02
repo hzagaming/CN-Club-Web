@@ -1,41 +1,114 @@
-# CN-Club-Web
-琢光中文文学社中文网站。以宣纸、水墨山水、朱砂印章与宋体排版为主要视觉元素。
+# 琢光中文文学社
 
-## 本地预览
+中文校园文学社网站。以宣纸、山水、朱印与书卷为视觉基础，包含 TypeScript 前端、2.5D 场景、PHP 会话登录和 SQLite 数据结构。
 
-无需安装前端依赖，在仓库目录运行：
+## 快速开始
+
+需要 Node.js 22+。完整后端需要 PHP 8.3+ 和 `pdo_sqlite` 扩展；生产环境请使用仍受维护的最新补丁版本。
 
 ```sh
-python3 -m http.server 8000
+npm ci
+npm run dev
 ```
 
-浏览器访问 http://localhost:8000 。JavaScript 使用 ES modules，请通过 HTTP 服务预览。
+访问 **http://127.0.0.1:5173**。此方式运行静态前端；登录窗口会说明账号服务未连接。修改源代码后重新运行构建/预览命令。无热更新依赖。
 
-## 页面与维护
+### 运行完整 PHP 版本
 
-- `index.html`：首页、文学社介绍、文苑、活动、加入说明及登录弹窗。
-- `style.css`：基础响应式布局；使用本地系统宋体，无远程字体请求。
-- `classical.css`：线装书、笺纸、朱印、窗棂与竖排阅读样式，标题优先使用系统楷体。
-- `experience.css`：触控目标、阅读字号、搜索空状态、固定导航及移动端体验。
-- `assets/`：本地 SVG 竹影、祥云与印章图标，无图片服务依赖。
-- `js/main.js`：文苑示范内容、关键词搜索、体裁筛选、连续阅读、横竖排与字号偏好、移动导航与弹窗交互。
-- `js/auth.js`：未来登录服务的接入边界。
+```sh
+npm run build
+php server/manage.php init
+php -S 127.0.0.1:8080 -t public server/router.php
+```
 
-作品均为网站示范文案，活动为筹划方向，招新渠道尚未配置。上线前请替换为经文学社确认的真实内容与联系方式。
+访问 **http://127.0.0.1:8080**。数据库默认位于 `var/club.sqlite`，不会放入公开目录或 Git。初始化不会创建默认账号。
 
-## 预留登录接口
+创建社员账号时从标准输入读取密码，避免密码进入命令行参数。下面命令通过 Python 的隐藏输入提示读取密码；账号和姓名可以自行替换：
 
-当前登录未开放，不发送账号请求，不保存密码或模拟登录成功。
-`js/auth.js` 预留 `login({ account, password })`，计划请求 `POST /api/auth/login`，JSON 请求体为 `{ account, password }`，使用 `credentials: 'include'`。
+```sh
+python3 -c 'import getpass; print(getpass.getpass("新账号密码（12–72 字节）："))' | php server/manage.php create-user reader "社员姓名" member
+```
 
-后续需与后端确认响应格式、会话查询、退出登录及 CSRF 防护，然后启用配置并接入表单提交、错误反馈和登录状态。仅修改 `enabled` 不会自动开放表单。
+可选角色为 `member`、`editor`、`admin`。这些角色已存入数据库，目前没有管理后台。账号名为 3–64 位字母、数字、下划线、点或横线。不开放自助注册。
+
+## 页面与功能
+
+- `index.html`：完整国风首页，社团介绍、文苑、活动、招新说明和登录窗口。
+- `index-lite.html`：独立清简入口，无脚本、无动画，可直接阅读示范诗歌。
+- 文苑支持全文搜索、体裁组合筛选、目录、上下篇、字号与横竖排阅读。
+- 「我的藏书」和阅读偏好保存在当前浏览器；存储不可用时降级为当前页面内存，并提示收藏无法持久保留。
+- 文章链接采用 `?article=rain`、`?article=moon`、`?article=letter`。复制失败时显示手动复制入口；本机地址不能直接分享给外部访客。
+- 登录可查询会话、登录、退出。使用服务端 Cookie 会话，不在浏览器本地存储密码或认证令牌。
+
+当前文章仍为明确标注的示范作品，活动与招新仍在筹划。投稿、报名、后台内容编辑以及账号收藏同步尚未实现；不得将预留表结构当作已上线功能。
+
+## 山水与动效
+
+首屏提供「晨岚／月白／墨染」三种意境、「重展此卷」序章、山体错层、鹤翼、流云、舟影与水纹。支持指针视差、卡片立体倾斜、章节显现、书卷与窗棂光影。
+
+首屏可暂停动画并记住偏好。系统减少动态效果优先；触屏降低视差，不启用鼠标倾斜。视差按需更新，静止后停止计算；首屏离开视野、切换后台时停止相应动画。没有脚本时正文仍然可见。
+
+请通过 HTTP 服务访问，直接双击 HTML 可能无法加载 ES modules。动画和交互有 DOM 测试，但本次环境没有浏览器控制权限，尚未完成实际视觉、移动设备和帧率验收。
+
+## 项目结构
+
+```text
+src/                  TypeScript 源码（strict 模式）
+  main.ts             文苑、阅读、导航与收藏
+  motion.ts           分层动画与动效生命周期
+  auth.ts             类型化账号 API 与登录交互
+  dom.ts              必需 DOM 元素查询
+js/                   TypeScript 编译产物，保留以支持直接静态预览
+assets/               本地 SVG 竹影、祥云与印章
+*.css                 视觉、响应式、阅读体验与动画
+server/               PHP API、开发路由与账号初始化命令
+database/schema.sql  SQLite 表与约束（用户、文章、收藏、活动、限流）
+scripts/              构建、静态预览、后端集成测试
+tests/                前端 DOM 集成测试
+public/               构建后公开目录（Git 忽略）
+var/                  本地数据库（Git 忽略）
+deployment/           Nginx 配置示例
+```
+
+修改 `src/*.ts`，再运行 `npm run build`；不要直接编辑 `js/*.js`。构建产物提交到 Git 以保留简单静态预览能力。`public/` 使用明确文件清单构建，不发布服务端源码、SQL、环境配置或数据库。SQL 是 SQLite 方言，不是 MySQL 脚本。
+
+## 账号 API
+
+所有接口返回 JSON：成功为 `{ "data": ... }`，失败为 `{ "error": { "message": "..." } }`。
+
+| 方法 | 路径                | 用途                                       |
+| ---- | ------------------- | ------------------------------------------ |
+| GET  | `/api/auth/session` | 返回 `user`（可为 null）和 `csrfToken`     |
+| POST | `/api/auth/login`   | JSON `{ account, password }`，成功返回会话 |
+| POST | `/api/auth/logout`  | 退出并返回新的匿名会话                     |
+
+POST 请求需携带 `X-CSRF-Token`，通过 session 接口获取；前端已接入。登录与退出更新会话 ID 和 CSRF 值。Cookie 设置 `HttpOnly`、`SameSite=Lax`；生产环境启用 `Secure`，需要 HTTPS。空闲会话两小时后失效。
+
+使用 PDO 参数绑定、密码哈希与数据库约束。登录按账号限制每十五分钟八次、按来源 IP 限制四十次；账号登录成功清除该账号的次数。反向代理场景默认使用实际连接地址，不信任任意转发请求头；如全站通过单一代理进入，部署时需按可信代理配置调整来源地址策略。
+
+`.env.example` 仅为环境变量说明；PHP 不会自动加载 `.env`。可以在命令前设置：
+
+```sh
+APP_DB_PATH=/absolute/path/club.sqlite php server/manage.php init
+```
+
+## 验证与维护
+
+```sh
+npm run check           # TypeScript 严格检查
+npm test                # 构建与前端 DOM 集成测试
+npm run test:php        # 真正启动 PHP，通过 HTTP 验证临时 SQLite 数据库
+npm run format:check    # 源码格式检查
+```
+
+后端测试使用临时数据库、随机测试密码和临时端口，测试结束后清理。可使用 `PHP_BIN=/path/to/php npm run test:php` 指定 PHP。涵盖初始化、密码哈希、登录退出、CSRF、会话轮换、请求校验、限流和私有文件隔离。
+
+GitHub Actions 配置同样执行类型、前端及 PHP 测试。CI 配置已添加，远程执行结果需要推送后才能确认。
 
 ## 部署
 
-将本仓库作为静态站点托管即可，不需要构建步骤。登录接口需要另行实现后端服务。
+纯静态部署：构建后仅上传 `public/`。不运行 PHP 时，账号入口显示服务未连接，其余功能可用。
 
-## 使用体验
+完整部署：保留仓库目录结构，**只将 `public/` 设为网站根目录**，用 PHP-FPM 处理 `/api/`，参见 `deployment/nginx.conf.example`。通过服务配置设置 `APP_ENV=production`、数据库路径及 HTTPS。PHP 运行用户需有数据库目录读写权限，数据库与备份均保留在公开目录之外。
 
-文苑支持篇名、体裁和正文搜索，可与体裁筛选同时使用。阅读窗口支持上下篇、放大字号和竖排阅读；仅阅读偏好存储于本机，浏览器禁用存储时仍可使用。竖排内容可横向滚动，键盘可聚焦正文区域。
-
-导航随滚动标记章节，移动菜单支持 Escape 关闭；弹窗支持 Escape 关闭和关闭后恢复焦点。遵循系统减少动画设置。页面提供无 JavaScript 提示。
+内置 `php -S` 和 Node 预览服务器仅用于开发。本站不包含默认密码、外部服务凭据或自动发布步骤。

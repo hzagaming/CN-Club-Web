@@ -1,0 +1,23 @@
+{
+  "name": "zhuoguang-literary-club",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "tsc && node scripts/build.mjs",
+    "dev": "npm run build && node scripts/dev.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "test:php": "python3 scripts/test_backend.py",
+    "format": "prettier --write \"src/**/*.ts\" \"scripts/*.mjs\" \"tests/*.mjs\" \"*.html\" \"*.css\" \"*.json\" README.md \".github/workflows/*.yml\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"scripts/*.mjs\" \"tests/*.mjs\" \"*.html\" \"*.css\" \"*.json\" README.md \".github/workflows/*.yml\""
+  },
+  "devDependencies": {
+    "jsdom": "26.0.0",
+    "prettier": "3.5.3",
+    "typescript": "5.8.3"
+  }
+}

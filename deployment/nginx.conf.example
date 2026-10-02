@@ -1,0 +1,20 @@
+# Include in an HTTPS server block; adjust paths and PHP-FPM socket.
+# Never expose the repository root as the web document root.
+root /srv/zhuoguang/public;
+index index.html;
+add_header X-Content-Type-Options nosniff always;
+add_header Referrer-Policy strict-origin-when-cross-origin always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" always;
+
+location / {
+    try_files $uri $uri/ =404;
+}
+location ^~ /api/ {
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME /srv/zhuoguang/server/api.php;
+    fastcgi_param APP_ENV production;
+    fastcgi_param HTTPS on;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+}
+location ~ /\. { deny all; }
+location ~ \.php$ { return 404; }
