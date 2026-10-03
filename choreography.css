@@ -1,0 +1,656 @@
+/* Global motion score: ink, paper, light, then stillness. Layout stays stable. */
+:root {
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.motion-dock {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 35;
+  display: flex;
+  gap: 0;
+  border: 1px solid #a8ad9688;
+  background: #f8f4e8ed;
+  box-shadow: 0 8px 32px #263e321a;
+  backdrop-filter: blur(16px);
+  padding: 4px;
+  border-radius: 4px;
+}
+.motion-dock button {
+  font: 11px/1.4 var(--serif, 'Songti SC', serif);
+  letter-spacing: 1px;
+  background: none;
+  color: #485b45;
+  border: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.motion-dock button + button {
+  border-left: 1px solid #c7c9b4;
+}
+.motion-dock-state:before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #89927b;
+  margin-right: 7px;
+}
+html[data-motion='on'] .motion-dock-state:before {
+  background: #a34632;
+  box-shadow: 0 0 0 3px #a3463210;
+}
+.motion-dock button:hover {
+  background: #e7e9da;
+}
+.motion-dock button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.motion-dock button:focus-visible {
+  outline: 2px solid #963e30;
+  outline-offset: 1px;
+}
+body {
+  padding-bottom: 64px;
+}
+.ink-character {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+.scroll-shutters {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.scroll-shutters i {
+  position: absolute;
+  inset: 0 50% 0 0;
+  background: linear-gradient(90deg, #e2d8bc, #f2ebd8 15%, #e6dbc0 96%, #ae9970);
+  border-right: 2px solid #b19a70;
+  box-shadow: 5px 0 18px #4c422720;
+  transform-origin: left center;
+}
+.scroll-shutters i + i {
+  inset: 0 0 0 50%;
+  background: linear-gradient(270deg, #e2d8bc, #f2ebd8 15%, #e6dbc0 96%, #ae9970);
+  border-right: 0;
+  border-left: 2px solid #b19a70;
+  transform-origin: right center;
+}
+.ink-brush-trail {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    #e1bb6c28 46%,
+    #f8eed980 50%,
+    transparent 58%
+  );
+  mix-blend-mode: soft-light;
+}
+html[data-motion='on'] .hero.is-unfolding .scroll-shutters {
+  display: block;
+}
+html[data-motion='on'] .hero.is-unfolding .scroll-shutters i {
+  animation: scroll-open-left 2.6s var(--motion-ease) both;
+}
+html[data-motion='on'] .hero.is-unfolding .scroll-shutters i + i {
+  animation-name: scroll-open-right;
+}
+html[data-motion='on'] .hero.is-unfolding .ink-character {
+  animation: ink-letter 1050ms var(--motion-ease) both;
+  animation-delay: var(--glyph-delay, 0ms);
+}
+html[data-motion='on'] .hero.is-unfolding .tiny-seal {
+  animation: seal-landing 900ms var(--motion-ease) 1300ms both;
+}
+html[data-motion='on'] .hero.is-unfolding .hero-description {
+  animation: paper-rise 1100ms var(--motion-ease) 650ms both;
+}
+html[data-motion='on'] .hero.is-unfolding .hero-actions {
+  animation: paper-rise 1000ms var(--motion-ease) 850ms both;
+}
+html[data-motion='on'] .hero.is-unfolding .ink-brush-trail {
+  animation: ink-light-pass 3s ease-in-out both;
+}
+@keyframes scroll-open-left {
+  0% {
+    transform: translateX(0) rotateY(0);
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-105%) rotateY(-12deg);
+    opacity: 0;
+  }
+}
+@keyframes scroll-open-right {
+  0% {
+    transform: translateX(0) rotateY(0);
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(105%) rotateY(12deg);
+    opacity: 0;
+  }
+}
+@keyframes ink-letter {
+  0% {
+    opacity: 0;
+    transform: translateY(42px) rotateX(-40deg) rotateZ(-4deg);
+    filter: blur(5px);
+  }
+  65% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0) rotateZ(0);
+    filter: blur(0);
+  }
+}
+@keyframes seal-landing {
+  0% {
+    opacity: 0;
+    transform: scale(1.8) rotate(-14deg);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.93) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes ink-light-pass {
+  0% {
+    opacity: 0;
+    transform: translateX(-70%);
+  }
+  35% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(70%);
+  }
+}
+@keyframes paper-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Repeatable section entrances. Only .is-entering changes visibility. */
+html[data-motion='on'] [data-entrance].is-entering {
+  animation: paper-rise 950ms var(--motion-ease) var(--entrance-delay, 0ms) both;
+}
+html[data-motion='on'] [data-entrance='book'].is-entering {
+  animation-name: book-unfold;
+  animation-duration: 1400ms;
+  transform-origin: 0 50%;
+}
+html[data-motion='on'] [data-entrance='card'].is-entering {
+  animation-name: card-unfold;
+  animation-duration: 1100ms;
+  transform-origin: 50% 100%;
+}
+html[data-motion='on'] [data-entrance='heading'].is-entering {
+  animation-name: title-unveil;
+  animation-duration: 1100ms;
+}
+html[data-motion='on'] [data-entrance='line'].is-entering {
+  animation-name: line-unfold;
+  animation-duration: 1100ms;
+  transform-origin: left center;
+}
+html[data-motion='on'] [data-entrance='quote'].is-entering {
+  animation-name: quote-arrive;
+  animation-duration: 1400ms;
+}
+html[data-motion='on'] [data-entrance='window'].is-entering {
+  animation-name: window-arrive;
+  animation-duration: 1600ms;
+}
+@keyframes book-unfold {
+  from {
+    opacity: 0;
+    transform: perspective(1100px) rotateY(-28deg) translateX(-25px) translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1100px) rotateY(0) translateX(0) translateY(0);
+  }
+}
+@keyframes card-unfold {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) rotateX(12deg) translateY(52px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(0) translateY(0) scale(1);
+  }
+}
+@keyframes title-unveil {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateX(0);
+  }
+}
+@keyframes line-unfold {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+    clip-path: inset(0 60% 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes quote-arrive {
+  from {
+    opacity: 0.2;
+    transform: translateY(25px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes window-arrive {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(32deg) rotateZ(-8deg) scale(0.86);
+  }
+  to {
+    opacity: 0.75;
+    transform: perspective(1200px) rotateY(0) rotateZ(0) scale(1);
+  }
+}
+/* Living artwork: loops run only while the card is visible. */
+html[data-motion='on'] .writing-card.motion-visible .art-rain:before {
+  animation: bamboo-wind 7s ease-in-out infinite alternate;
+  transform-origin: 25% 100%;
+}
+html[data-motion='on'] .writing-card.motion-visible .art-moon:before {
+  animation: moon-glow 7s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .writing-card.motion-visible .art-letter:before {
+  animation: letter-drift 10s ease-in-out infinite alternate;
+}
+.card-art > span {
+  transition: transform 800ms var(--motion-ease);
+}
+html[data-motion='on'] .writing-card:hover .card-art > span {
+  transform: translateY(-6px);
+}
+html[data-motion='on'] .writing-card:hover .card-stamp {
+  animation: small-stamp 600ms var(--motion-ease);
+}
+@keyframes bamboo-wind {
+  from {
+    transform: rotate(-13deg) translateX(-5px);
+  }
+  to {
+    transform: rotate(-5deg) translateX(5px);
+  }
+}
+@keyframes moon-glow {
+  from {
+    transform: scale(0.94);
+    opacity: 0.65;
+    box-shadow: 0 0 10px #ecdfb110;
+  }
+  to {
+    transform: scale(1.05);
+    opacity: 0.95;
+    box-shadow: 0 0 40px #ecdfb150;
+  }
+}
+@keyframes letter-drift {
+  from {
+    transform: translateY(7px) rotate(-18deg);
+  }
+  to {
+    transform: translateY(-8px) rotate(-15deg);
+  }
+}
+@keyframes small-stamp {
+  from {
+    transform: rotate(-12deg) scale(1.18);
+  }
+  to {
+    transform: rotate(-5deg) scale(1);
+  }
+}
+/* Pointer light and click ink are decorative and never intercept input. */
+.journey-links > a,
+.activity-list article,
+.primary-link,
+.login-button {
+  position: relative;
+  isolation: isolate;
+}
+.journey-links > a:before,
+.activity-list article:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at var(--light-x, 50%) var(--light-y, 50%),
+    #d6bf8640,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+html[data-motion='on'] .has-pointer:before {
+  opacity: 1;
+}
+.journey-links .journey-mark {
+  transition:
+    transform 0.65s var(--motion-ease),
+    color 0.4s;
+}
+.journey-links i {
+  transition: transform 0.5s var(--motion-ease);
+}
+html[data-motion='on'] .journey-links > a:hover .journey-mark {
+  transform: translateY(-6px) rotate(-8deg);
+  color: var(--red);
+}
+html[data-motion='on'] .journey-links > a:hover i {
+  transform: translate(4px, -4px);
+}
+.primary-link {
+  overflow: hidden;
+}
+.primary-link:before {
+  content: '';
+  position: absolute;
+  inset: -100% -35%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 35%, #ffe4b73d 49%, transparent 63%);
+  transform: translateX(-90%) rotate(8deg);
+  opacity: 0;
+}
+html[data-motion='on'] .primary-link:hover:before,
+html[data-motion='on'] .primary-link:focus-visible:before {
+  animation: button-sheen 900ms ease-out;
+}
+.activity-index {
+  transition:
+    transform 0.6s var(--motion-ease),
+    color 0.4s;
+}
+.activity-list article:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: #976b40;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s var(--motion-ease);
+}
+html[data-motion='on'] .activity-list article:hover:after {
+  transform: scaleX(1);
+}
+html[data-motion='on'] .activity-list article:hover .activity-index {
+  transform: translateY(-4px) rotate(-6deg);
+  color: #94633c;
+}
+.header nav a:after {
+  transition:
+    opacity 0.3s,
+    width 0.45s var(--motion-ease),
+    left 0.45s var(--motion-ease);
+}
+.header nav a:hover:after,
+.header nav a[aria-current]:after {
+  width: 70%;
+  left: 15%;
+}
+html[data-motion='on'] .filters button.active {
+  animation: filter-imprint 500ms var(--motion-ease);
+}
+.ripple-host {
+  position: relative;
+}
+.ink-ripple {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  margin: -45px 0 0 -45px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 30%, #d1a66125 62%, transparent 70%);
+  pointer-events: none;
+  z-index: 4;
+  animation: ink-ripple-out 700ms ease-out both;
+  max-width: none;
+}
+@keyframes button-sheen {
+  0% {
+    transform: translateX(-90%) rotate(8deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(90%) rotate(8deg);
+    opacity: 0;
+  }
+}
+@keyframes filter-imprint {
+  from {
+    transform: scale(0.92);
+    box-shadow: 0 0 0 8px #963e3010;
+  }
+  to {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 #963e3000;
+  }
+}
+@keyframes ink-ripple-out {
+  from {
+    transform: scale(0.15);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+/* Reading and writing have their own quieter motion. */
+html[data-motion='on'] dialog[open]::backdrop {
+  animation: backdrop-ink 450ms ease-out;
+}
+.reader-tools button,
+.reader-library button,
+.reader-pagination button {
+  transition:
+    background 0.25s,
+    color 0.25s,
+    box-shadow 0.25s;
+}
+.reader-tools button:hover,
+.reader-library button:hover,
+.reader-pagination button:not(:disabled):hover {
+  box-shadow: 0 3px 0 #b3b39b55;
+}
+.field input,
+.field textarea,
+.field select {
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    background 0.3s;
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: #947344;
+  box-shadow: 0 0 0 4px #baa06b18;
+  background: #fdf8eb;
+}
+#save-draft[aria-busy='true'] {
+  background-image: linear-gradient(110deg, transparent 30%, #efd9ab44 48%, transparent 65%);
+  background-size: 250% 100%;
+}
+html[data-motion='on'] #save-draft[aria-busy='true'] {
+  animation: writing-wash 2s ease-in-out infinite;
+}
+.guide-questions summary:after {
+  transition: transform 0.4s var(--motion-ease);
+}
+.guide-questions details[open] summary:after {
+  transform: rotate(180deg);
+}
+@keyframes backdrop-ink {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes writing-wash {
+  from {
+    background-position: 180% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+html[data-motion='off'] [data-entrance],
+html[data-motion='off'] .ink-character {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+html[data-motion='off'] .ink-ripple {
+  display: none;
+}
+html[data-motion='off'] .scroll-shutters {
+  display: none;
+}
+html[data-motion='off'] .has-pointer:before {
+  opacity: 0;
+}
+html[data-motion='off'] *,
+html[data-motion='off'] *:before,
+html[data-motion='off'] *:after {
+  animation: none !important;
+  transition: none !important;
+}
+html[data-motion-suspended] *,
+html[data-motion-suspended] *:before,
+html[data-motion-suspended] *:after {
+  animation-play-state: paused !important;
+}
+@media (max-width: 640px) {
+  .motion-dock {
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 3px;
+  }
+  .motion-dock button {
+    font-size: 10px;
+    padding: 8px 10px;
+    min-height: 38px;
+  }
+  .motion-dock-state:before {
+    width: 5px;
+    height: 5px;
+    margin-right: 6px;
+  }
+  body {
+    padding-bottom: 64px;
+  }
+  html[data-motion='on'] [data-entrance='window'].is-entering {
+    animation-name: window-arrive-mobile;
+  }
+  .hero.is-unfolding .ink-character {
+    filter: none;
+  }
+  .ink-ripple {
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+  }
+  .writing-card .card-art:before {
+    animation-duration: 10s !important;
+  }
+  html[data-motion='on'] .writing-card:hover .card-art > span {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  [data-entrance],
+  .ink-character {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .scroll-shutters,
+  .ink-ripple {
+    display: none !important;
+  }
+}
+
+@keyframes window-arrive-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 0.12;
+    transform: translateY(0);
+  }
+}

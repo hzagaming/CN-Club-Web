@@ -10,6 +10,7 @@ for (const name of [
   'classical.css',
   'experience.css',
   'motion.css',
+  'choreography.css',
   'lite.css',
 ]) {
   await copyFile(name, `public/${name}`);

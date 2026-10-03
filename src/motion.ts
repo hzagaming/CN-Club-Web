@@ -85,6 +85,7 @@ function applyPreference() {
     });
   }
   syncScene();
+  document.dispatchEvent(new Event('zhuoguang:motionchange'));
 }
 function tick() {
   frame = 0;
@@ -148,34 +149,6 @@ if ('IntersectionObserver' in window) {
   document
     .querySelectorAll('.quote-section,.join-art')
     .forEach((element) => ambience.observe(element));
-  const reveal = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        reveal.unobserve(entry.target);
-        const isBook = entry.target.classList.contains('section-side');
-        play(
-          entry.target,
-          isBook
-            ? [
-                { opacity: 0.35, transform: 'perspective(1000px) rotateY(-9deg) translateY(20px)' },
-                { opacity: 1, transform: 'perspective(1000px) rotateY(0deg) translateY(0)' },
-              ]
-            : [
-                { opacity: 0.3, transform: 'translateY(24px)' },
-                { opacity: 1, transform: 'translateY(0)' },
-              ],
-          { duration: isBook ? 1100 : 800 },
-        );
-      }
-    },
-    { threshold: 0.12 },
-  );
-  document
-    .querySelectorAll(
-      '.section-side,.about-content,.section-heading,.activity-list article,.join>div:first-child,.guide-grid,.writing-card',
-    )
-    .forEach((element) => reveal.observe(element));
 }
 const grid = element('#writing-grid');
 grid.addEventListener(
@@ -204,38 +177,6 @@ grid.addEventListener(
 );
 grid.addEventListener('pointerleave', resetTilt);
 grid.addEventListener('focusin', resetTilt);
-new MutationObserver(() => {
-  resetTilt();
-  [...grid.children].forEach((card, index) =>
-    play(
-      card,
-      [
-        { opacity: 0.4, transform: 'translateY(15px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ],
-      { duration: 500, delay: index * 60 },
-    ),
-  );
-}).observe(grid, { childList: true });
-// Native dialog semantics and focus management remain in main.js.
-document.querySelectorAll<HTMLDialogElement>('dialog').forEach((dialog) => {
-  new MutationObserver(() => {
-    if (dialog.open) {
-      resetTilt();
-      play(
-        dialog,
-        [
-          {
-            opacity: 0.4,
-            transform: 'perspective(1200px) translateY(20px) rotateX(-3deg) scale(.98)',
-          },
-          { opacity: 1, transform: 'none' },
-        ],
-        { duration: 400 },
-      );
-    }
-  }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
-});
 toggle.addEventListener('click', () => {
   optedOut = !optedOut;
   try {
@@ -262,6 +203,7 @@ unfoldScene();
 
 function unfoldScene() {
   if (!enabled || document.hidden || !sceneVisible) return;
+  document.dispatchEvent(new Event('zhuoguang:unfold'));
   for (const animation of activeAnimations) animation.cancel();
   activeAnimations.clear();
   play(
@@ -273,28 +215,12 @@ function unfoldScene() {
     { duration: 2300, easing: 'cubic-bezier(.16,1,.3,1)' },
   );
   play(
-    element('.hero h1'),
-    [
-      { clipPath: 'inset(0 0 100% 0)', transform: 'translateY(18px)' },
-      { clipPath: 'inset(0 0 0% 0)', transform: 'translateY(0)' },
-    ],
-    { duration: 1500 },
-  );
-  play(
     element('.sun'),
     [
       { opacity: 0, scale: '.65' },
       { opacity: 0.85, scale: '1' },
     ],
     { duration: 2000 },
-  );
-  play(
-    element('.hero .tiny-seal'),
-    [
-      { opacity: 0, scale: '1.7', rotate: '-16deg' },
-      { opacity: 1, scale: '1', rotate: '0deg' },
-    ],
-    { duration: 700, delay: 850, fill: 'backwards' },
   );
   document.querySelectorAll('.gold-ridge path').forEach((line, index) =>
     play(

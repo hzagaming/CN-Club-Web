@@ -62,6 +62,8 @@ function controls() {
     body.disabled = busy;
     body.readOnly = current.status === 'submitted';
     saveButton.disabled = locked || (!dirty && current.version > 0);
+    saveButton.setAttribute('aria-busy', String(busy));
+    form.setAttribute('aria-busy', String(busy));
     saveButton.textContent = busy ? '处理中…' : '保存草稿';
     submitButton.disabled = locked || dirty || current.version === 0 || !body.value.trim();
     element('#new-draft').disabled = busy;
