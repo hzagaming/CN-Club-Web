@@ -1039,3 +1039,40 @@ html[data-motion='on'].css-replaying .landscape {
     margin-bottom: 5px;
   }
 }
+
+/* The cover lifts independently; keyboard focus gets the same visual response. */
+html[data-motion='on'] .writing-card:focus-within .card-art > span {
+  transform: translateY(-6px);
+}
+html[data-motion='on'] .writing-card:focus-within .card-stamp {
+  animation: small-stamp 600ms var(--motion-ease);
+}
+html[data-motion='on'] .writing-card:focus-within {
+  box-shadow:
+    0 8px 28px #30433420,
+    0 0 0 2px #a48a5555;
+}
+html[data-motion='on'] .reader-pagination button:not(:disabled):hover,
+html[data-motion='on'] .reader-pagination button:focus-visible {
+  animation: arrow-glide 700ms ease-in-out alternate 2;
+}
+html[data-motion='on'] #save-writing[aria-pressed='true'] {
+  animation: filter-imprint 550ms var(--motion-ease);
+}
+html[data-motion='on'] .empty-state:not([hidden]) {
+  animation: paper-rise 700ms var(--motion-ease) both;
+}
+@media (max-width: 640px) {
+  html[data-motion='on'] .header nav.open a {
+    animation: nav-arrive 650ms var(--motion-ease) both;
+  }
+  html[data-motion='on'] .header nav.open a:nth-child(2) {
+    animation-delay: 70ms;
+  }
+  html[data-motion='on'] .header nav.open a:nth-child(3) {
+    animation-delay: 140ms;
+  }
+  html[data-motion='on'] .header nav.open a:nth-child(4) {
+    animation-delay: 210ms;
+  }
+}

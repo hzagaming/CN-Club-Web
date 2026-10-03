@@ -160,6 +160,7 @@ const reader = element<HTMLDialogElement>('#reader-dialog');
 const readerBody = element('#reader-body');
 function showWriting(index: number) {
   if (!writings[index]) return;
+  readerBody.dataset.turn = !reader.open ? 'open' : index < currentWriting ? 'previous' : 'next';
   currentWriting = index;
   const item = writings[index];
   element('#reader-category').textContent = `${item.label} · 示范作品`;

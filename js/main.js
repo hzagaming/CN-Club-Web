@@ -156,6 +156,7 @@ const readerBody = element('#reader-body');
 function showWriting(index) {
     if (!writings[index])
         return;
+    readerBody.dataset.turn = !reader.open ? 'open' : index < currentWriting ? 'previous' : 'next';
     currentWriting = index;
     const item = writings[index];
     element('#reader-category').textContent = `${item.label} · 示范作品`;

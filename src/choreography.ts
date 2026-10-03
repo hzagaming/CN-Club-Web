@@ -20,11 +20,15 @@ function trackAnimation(
   options: KeyframeAnimationOptions,
 ): void {
   if (!motionAllowed() || !target.animate) return;
+  for (const active of transientAnimations) {
+    if ((active.effect as KeyframeEffect | null)?.target === target) active.cancel();
+  }
   const animation = target.animate(frames, options);
   transientAnimations.add(animation);
   animation.onfinish = animation.oncancel = () => transientAnimations.delete(animation);
 }
 function cancelMotion(): void {
+  clearPointerLight();
   clearTimeout(heroTimer);
   cancelAnimationFrame(redrawFrame);
   pageHero?.classList.remove('is-unfolding');
@@ -196,6 +200,14 @@ let hoverFrame = 0;
 let hovered: HTMLElement | null = null;
 let hoverX = 50,
   hoverY = 50;
+function clearPointerLight(): void {
+  cancelAnimationFrame(hoverFrame);
+  hoverFrame = 0;
+  hovered?.classList.remove('has-pointer');
+  hovered = null;
+}
+document.addEventListener('pointerleave', clearPointerLight);
+addEventListener('blur', clearPointerLight);
 document.addEventListener(
   'pointermove',
   (event) => {
@@ -256,7 +268,13 @@ document.addEventListener(
 // Each dialog animates independently of whether the homepage hero is in view.
 document.querySelectorAll<HTMLDialogElement>('dialog').forEach((dialog) => {
   new MutationObserver(() => {
-    if (!dialog.open) return;
+    if (!dialog.open) {
+      for (const active of transientAnimations) {
+        const target = (active.effect as KeyframeEffect | null)?.target;
+        if (target && (target === dialog || dialog.contains(target))) active.cancel();
+      }
+      return;
+    }
     trackAnimation(
       dialog,
       [
@@ -270,13 +288,24 @@ document.querySelectorAll<HTMLDialogElement>('dialog').forEach((dialog) => {
 const readerBody = document.querySelector('#reader-body');
 if (readerBody)
   new MutationObserver(() => {
+    if (!readerBody.closest('dialog')?.open) return;
+    const backwards = (readerBody as HTMLElement).dataset.turn === 'previous';
+    const direction = backwards ? -1 : 1;
     trackAnimation(
       readerBody,
       [
-        { opacity: 0.1, transform: 'translateX(24px)' },
-        { opacity: 1, transform: 'translateX(0)' },
+        {
+          opacity: 0.15,
+          transform: `perspective(1400px) translateX(${direction * 28}px) rotateY(${direction * 9}deg)`,
+          transformOrigin: backwards ? '100% 50%' : '0 50%',
+        },
+        {
+          opacity: 1,
+          transform: 'perspective(1400px) translateX(0) rotateY(0)',
+          transformOrigin: backwards ? '100% 50%' : '0 50%',
+        },
       ],
-      { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)' },
+      { duration: 620, easing: 'cubic-bezier(.16,1,.3,1)' },
     );
   }).observe(readerBody, { childList: true });
 document.querySelectorAll('details').forEach((details) =>

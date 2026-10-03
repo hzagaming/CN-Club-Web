@@ -62,6 +62,11 @@ test('deep links, reading preferences, shelf and share fallback work together', 
     const doc = d.window.document;
     assert.equal(doc.querySelector('#reader-dialog').open, true);
     assert.match(doc.querySelector('#reader-title').textContent, /月光/);
+    assert.equal(doc.querySelector('#reader-body').dataset.turn, 'open');
+    doc.querySelector('#next-writing').click();
+    assert.equal(doc.querySelector('#reader-body').dataset.turn, 'next');
+    doc.querySelector('#previous-writing').click();
+    assert.equal(doc.querySelector('#reader-body').dataset.turn, 'previous');
     doc.querySelector('#save-writing').click();
     assert.deepEqual(JSON.parse(d.window.localStorage.getItem('zhuoguang-saved')), ['moon']);
     doc.querySelector('#reading-size').click();
@@ -162,6 +167,8 @@ test('scene selection, replay and pause respect reduced motion', () => {
     assert.equal(doc.documentElement.dataset.motion, 'on');
     doc.querySelector('[data-scene-choice=moon]').click();
     assert.equal(doc.querySelector('.hero').dataset.scene, 'moon');
+    w.zhuoguangMotion.refresh();
+    assert.match(doc.querySelector('#scene-status').textContent, /三盏浮灯/);
     const before = plays;
     doc.querySelector('#replay-scene').click();
     assert.ok(plays > before);

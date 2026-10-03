@@ -823,3 +823,250 @@ html[data-motion='off'] .ambient-active * {
     opacity: 1;
   }
 }
+
+/* 三境的独立气息：装饰始终留在山水画框内，不遮挡正文与控件。 */
+.scene-weather {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  contain: paint;
+}
+.dawn-light,
+.moon-lanterns,
+.ink-rain,
+.scene-motes {
+  position: absolute;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+}
+.hero[data-scene='dawn'] .dawn-light,
+.hero[data-scene='moon'] .moon-lanterns,
+.hero[data-scene='ink'] .ink-rain,
+.hero:not([data-scene='ink']) .scene-motes {
+  display: block;
+}
+.dawn-light i {
+  position: absolute;
+  top: -35%;
+  left: 34%;
+  width: 12%;
+  height: 125%;
+  transform: rotate(-28deg);
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, transparent 10%, #f9d58e55 46%, transparent 90%);
+  opacity: 0.4;
+}
+.dawn-light i + i {
+  left: 58%;
+  width: 23%;
+  opacity: 0.2;
+}
+.moon-lanterns i {
+  --lantern-size: 18px;
+  position: absolute;
+  left: 20%;
+  top: 47%;
+  width: var(--lantern-size);
+  height: calc(var(--lantern-size) * 1.4);
+  border-radius: 28% 28% 34% 34%;
+  background: linear-gradient(90deg, #aa723d, #f6d798 42%, #e8bd72 62%, #af784a);
+  border: 1px solid #8b623f99;
+  box-shadow:
+    0 0 22px #f7cf6c66,
+    inset 0 -5px 8px #8c452a44;
+  transform: rotate(-6deg);
+}
+.moon-lanterns i:before,
+.moon-lanterns i:after {
+  content: '';
+  position: absolute;
+  left: 27%;
+  right: 27%;
+  height: 2px;
+  background: #a67840;
+  border-radius: 50%;
+}
+.moon-lanterns i:before {
+  top: -2px;
+}
+.moon-lanterns i:after {
+  bottom: -2px;
+}
+.moon-lanterns b {
+  position: absolute;
+  top: 4%;
+  left: 25%;
+  width: 50%;
+  height: 92%;
+  border-inline: 1px solid #906b3944;
+  border-radius: 50%;
+}
+.moon-lanterns i:nth-child(2) {
+  --lantern-size: 11px;
+  top: 27%;
+  left: 72%;
+  opacity: 0.7;
+}
+.moon-lanterns i:nth-child(3) {
+  --lantern-size: 8px;
+  top: 20%;
+  left: 29%;
+  opacity: 0.5;
+}
+.ink-rain i {
+  position: absolute;
+  top: 12%;
+  left: 14%;
+  width: 1px;
+  height: 18%;
+  background: linear-gradient(transparent, #384b4255, transparent);
+  transform: rotate(18deg);
+  opacity: 0;
+}
+.ink-rain i:nth-child(2) {
+  left: 26%;
+  top: 30%;
+}
+.ink-rain i:nth-child(3) {
+  left: 39%;
+  top: 9%;
+}
+.ink-rain i:nth-child(4) {
+  left: 53%;
+  top: 36%;
+}
+.ink-rain i:nth-child(5) {
+  left: 68%;
+  top: 18%;
+}
+.ink-rain i:nth-child(6) {
+  left: 82%;
+  top: 28%;
+}
+.ink-rain i:nth-child(7) {
+  left: 44%;
+  top: 54%;
+}
+.ink-rain i:nth-child(8) {
+  left: 77%;
+  top: 58%;
+}
+.scene-motes i {
+  position: absolute;
+  left: 18%;
+  top: 64%;
+  width: 3px;
+  height: 3px;
+  background: #d6b06b;
+  border-radius: 50%;
+  box-shadow: 0 0 7px #ecca79aa;
+  opacity: 0.4;
+}
+.scene-motes i:nth-child(2) {
+  left: 38%;
+  top: 38%;
+}
+.scene-motes i:nth-child(3) {
+  left: 76%;
+  top: 72%;
+}
+.scene-motes i:nth-child(4) {
+  left: 58%;
+  top: 57%;
+}
+.scene-motes i:nth-child(5) {
+  left: 85%;
+  top: 42%;
+}
+.scene-motes i:nth-child(6) {
+  left: 30%;
+  top: 83%;
+}
+/* Only the selected scene animates. The offscreen hero pauses all its layers. */
+html[data-motion='on'] .hero .dawn-light i {
+  animation: dawn-ray 12s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .hero .moon-lanterns i {
+  animation: lantern-rise 10s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .hero .ink-rain i {
+  animation: ink-shower 3.2s linear infinite;
+}
+html[data-motion='on'] .hero .scene-motes i {
+  animation: mote-wander 8s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .hero .scene-weather i:nth-child(2n) {
+  animation-delay: -3s;
+}
+html[data-motion='on'] .hero .scene-weather i:nth-child(3n) {
+  animation-delay: -5.5s;
+}
+html[data-motion='on'] .hero .scene-weather i:nth-child(4n) {
+  animation-delay: -1.6s;
+}
+.hero[data-scene-ready='true']:not(.scene-active) .scene-weather * {
+  animation-play-state: paused !important;
+}
+@keyframes dawn-ray {
+  from {
+    transform: rotate(-30deg) scaleX(0.8);
+    opacity: 0.12;
+  }
+  to {
+    transform: rotate(-19deg) scaleX(1.2);
+    opacity: 0.65;
+  }
+}
+@keyframes lantern-rise {
+  0% {
+    transform: translate3d(-8px, 17px, 0) rotate(-8deg);
+  }
+  50% {
+    transform: translate3d(5px, -4px, 0) rotate(3deg);
+  }
+  100% {
+    transform: translate3d(13px, -30px, 0) rotate(-4deg);
+  }
+}
+@keyframes ink-shower {
+  0% {
+    transform: translate3d(14px, -55px, 0) rotate(18deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.65;
+  }
+  80% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(-36px, 100px, 0) rotate(18deg);
+    opacity: 0;
+  }
+}
+@keyframes mote-wander {
+  0% {
+    transform: translate3d(-6px, 14px, 0);
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(15px, -24px, 0);
+    opacity: 0.25;
+  }
+}
+@media (max-width: 640px) {
+  .scene-weather .scene-motes i:nth-child(n + 4),
+  .scene-weather .ink-rain i:nth-child(n + 5) {
+    display: none;
+  }
+  .dawn-light {
+    opacity: 0.65;
+  }
+}

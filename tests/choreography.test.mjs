@@ -56,9 +56,11 @@ async function setup(studio = false, reduced = false) {
       this.targets.delete(node);
     }
   };
-  w.Element.prototype.animate = function () {
+  w.Element.prototype.animate = function (keyframes) {
     const entry = {
       target: this,
+      effect: { target: this },
+      keyframes,
       cancelled: false,
       cancel() {
         this.cancelled = true;
@@ -244,5 +246,87 @@ test('every system reduced-motion CSS rule permits an explicit full-motion choic
     }
   } finally {
     dom.window.close();
+  }
+});
+
+test('card tilt batches pointer events, caches geometry and cleans up on pause or removal', async () => {
+  const c = await setup();
+  try {
+    c.visible(c.doc.querySelector('.hero'), false);
+    const grid = c.doc.querySelector('#writing-grid');
+    grid.innerHTML = '<article class="writing-card">文字</article>';
+    await flush();
+    const card = grid.firstElementChild;
+    let measurements = 0;
+    card.getBoundingClientRect = () => {
+      measurements++;
+      return { left: 0, top: 0, width: 300, height: 400 };
+    };
+    const move = (x) =>
+      card.dispatchEvent(
+        new c.w.MouseEvent('pointermove', {
+          bubbles: true,
+          clientX: x,
+          clientY: 100,
+        }),
+      );
+    for (let x = 120; x <= 240; x += 20) move(x);
+    assert.equal(measurements, 0);
+    c.tick();
+    assert.equal(measurements, 1);
+    assert.equal(card.classList.contains('is-tilting'), true);
+    assert.equal(card.style.getPropertyValue('--shine-x'), '80%');
+    move(150);
+    c.tick();
+    assert.equal(measurements, 1);
+    assert.equal(card.style.getPropertyValue('--shine-x'), '50%');
+    move(200);
+    c.w.zhuoguangMotion.setMode('off');
+    c.tick();
+    assert.equal(card.classList.contains('is-tilting'), false);
+    assert.equal(card.style.getPropertyValue('--shine-x'), '50%');
+    c.w.zhuoguangMotion.setMode('full');
+    move(220);
+    c.tick();
+    assert.equal(measurements, 2);
+    c.w.dispatchEvent(new c.w.Event('scroll'));
+    assert.equal(card.classList.contains('is-tilting'), false);
+    move(240);
+    card.remove();
+    c.tick();
+    assert.equal(measurements, 2);
+    assert.equal(card.classList.contains('is-tilting'), false);
+  } finally {
+    c.dom.window.close();
+  }
+});
+test('reader turns follow navigation direction, replace pending turns and stop on close', async () => {
+  const c = await setup();
+  try {
+    const dialog = c.doc.querySelector('#reader-dialog');
+    const body = c.doc.querySelector('#reader-body');
+    dialog.open = true;
+    body.dataset.turn = 'next';
+    body.innerHTML = '<p>下一篇</p>';
+    await flush();
+    const first = c.animations.findLast((a) => a.target === body);
+    assert.match(first.keyframes[0].transform, /translateX\(28px\)/);
+    body.dataset.turn = 'previous';
+    body.innerHTML = '<p>上一篇</p>';
+    await flush();
+    const second = c.animations.findLast((a) => a.target === body);
+    assert.equal(first.cancelled, true);
+    assert.match(second.keyframes[0].transform, /translateX\(-28px\)/);
+    assert.equal(second.keyframes[0].transformOrigin, '100% 50%');
+    dialog.open = false;
+    await flush();
+    assert.equal(second.cancelled, true);
+    assert.ok(c.animations.filter((a) => a.target === dialog).every((a) => a.cancelled));
+    const count = c.animations.length;
+    body.innerHTML = '<p>关闭后更新</p>';
+    await flush();
+    assert.equal(c.animations.length, count);
+  } finally {
+    c.dom.window.close();
   }
 });

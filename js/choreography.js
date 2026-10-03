@@ -17,11 +17,16 @@ const replayButton = dock.querySelector('[data-motion-command="replay"]');
 function trackAnimation(target, frames, options) {
     if (!motionAllowed() || !target.animate)
         return;
+    for (const active of transientAnimations) {
+        if (active.effect?.target === target)
+            active.cancel();
+    }
     const animation = target.animate(frames, options);
     transientAnimations.add(animation);
     animation.onfinish = animation.oncancel = () => transientAnimations.delete(animation);
 }
 function cancelMotion() {
+    clearPointerLight();
     clearTimeout(heroTimer);
     cancelAnimationFrame(redrawFrame);
     pageHero?.classList.remove('is-unfolding');
@@ -199,6 +204,14 @@ document.addEventListener('zhuoguang:replay', () => {
 let hoverFrame = 0;
 let hovered = null;
 let hoverX = 50, hoverY = 50;
+function clearPointerLight() {
+    cancelAnimationFrame(hoverFrame);
+    hoverFrame = 0;
+    hovered?.classList.remove('has-pointer');
+    hovered = null;
+}
+document.addEventListener('pointerleave', clearPointerLight);
+addEventListener('blur', clearPointerLight);
 document.addEventListener('pointermove', (event) => {
     if (!motionAllowed() || !precisePointer.matches || event.pointerType === 'touch')
         return;
@@ -247,8 +260,14 @@ document.addEventListener('pointerdown', (event) => {
 // Each dialog animates independently of whether the homepage hero is in view.
 document.querySelectorAll('dialog').forEach((dialog) => {
     new MutationObserver(() => {
-        if (!dialog.open)
+        if (!dialog.open) {
+            for (const active of transientAnimations) {
+                const target = active.effect?.target;
+                if (target && (target === dialog || dialog.contains(target)))
+                    active.cancel();
+            }
             return;
+        }
         trackAnimation(dialog, [
             { opacity: 0, transform: 'perspective(1200px) translateY(35px) rotateX(-7deg) scale(.94)' },
             { opacity: 1, transform: 'perspective(1200px) translateY(0) rotateX(0) scale(1)' },
@@ -258,10 +277,22 @@ document.querySelectorAll('dialog').forEach((dialog) => {
 const readerBody = document.querySelector('#reader-body');
 if (readerBody)
     new MutationObserver(() => {
+        if (!readerBody.closest('dialog')?.open)
+            return;
+        const backwards = readerBody.dataset.turn === 'previous';
+        const direction = backwards ? -1 : 1;
         trackAnimation(readerBody, [
-            { opacity: 0.1, transform: 'translateX(24px)' },
-            { opacity: 1, transform: 'translateX(0)' },
-        ], { duration: 500, easing: 'cubic-bezier(.2,.8,.2,1)' });
+            {
+                opacity: 0.15,
+                transform: `perspective(1400px) translateX(${direction * 28}px) rotateY(${direction * 9}deg)`,
+                transformOrigin: backwards ? '100% 50%' : '0 50%',
+            },
+            {
+                opacity: 1,
+                transform: 'perspective(1400px) translateX(0) rotateY(0)',
+                transformOrigin: backwards ? '100% 50%' : '0 50%',
+            },
+        ], { duration: 620, easing: 'cubic-bezier(.16,1,.3,1)' });
     }).observe(readerBody, { childList: true });
 document.querySelectorAll('details').forEach((details) => details.addEventListener('toggle', () => {
     if (!details.open)

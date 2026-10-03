@@ -22,6 +22,15 @@ let targetX = 0,
 let heroTop = 0,
   heroHeight = 1;
 let tiltedCard: HTMLElement | null = null;
+let tiltFrame = 0;
+let tiltRect: DOMRect | null = null;
+let tiltPointerX = 0,
+  tiltPointerY = 0;
+const sceneDescriptions = {
+  dawn: '晨岚 · 微光穿云，远山渐醒',
+  moon: '月白 · 三盏浮灯，一川清梦',
+  ink: '墨染 · 细雨入砚，山水成诗',
+};
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 function play(element: Element, frames: Keyframe[], options: KeyframeAnimationOptions = {}) {
@@ -37,6 +46,9 @@ function play(element: Element, frames: Keyframe[], options: KeyframeAnimationOp
   animation.oncancel = forget;
 }
 function resetTilt() {
+  cancelAnimationFrame(tiltFrame);
+  tiltFrame = 0;
+  tiltRect = null;
   if (!tiltedCard) return;
   tiltedCard.classList.remove('is-tilting');
   tiltedCard = null;
@@ -44,7 +56,6 @@ function resetTilt() {
 function suspend() {
   cancelAnimationFrame(frame);
   frame = 0;
-  resetTilt();
   for (const animation of activeAnimations) animation.cancel();
   activeAnimations.clear();
 }
@@ -64,10 +75,13 @@ function applyPreference() {
   replay.hidden = false;
   replay.disabled = !enabled;
   replay.title = !enabled ? '先开启动效后，即可重播山水展卷' : '重新播放山水展卷';
-  sceneStatus.textContent = enabled ? '云起 · 山行 · 鹤归' : '动效已关闭，可点击开启完整动效';
+  sceneStatus.textContent = enabled
+    ? sceneDescriptions[hero.dataset.scene as keyof typeof sceneDescriptions]
+    : '动效已关闭，可点击开启完整动效';
   toggle.setAttribute('aria-pressed', String(!enabled));
   label.textContent = enabled ? '暂停动效' : '开启完整动效';
   if (!enabled) {
+    resetTilt();
     x = y = targetX = targetY = scrollDepth = targetScroll = 0;
     layers.forEach((layer) => {
       layer.style.removeProperty('--layer-x');
@@ -139,7 +153,27 @@ if ('IntersectionObserver' in window) {
     .querySelectorAll('.quote-section,.join-art')
     .forEach((element) => ambience.observe(element));
 }
+function updateTilt() {
+  tiltFrame = 0;
+  if (!tiltedCard?.isConnected || !enabled || document.hidden || !finePointer.matches) {
+    resetTilt();
+    return;
+  }
+  // Cache the card geometry until pointer exit or scrolling changes its position.
+  tiltRect ??= tiltedCard.getBoundingClientRect();
+  const px = clamp((tiltPointerX - tiltRect.left) / Math.max(1, tiltRect.width), 0, 1);
+  const py = clamp((tiltPointerY - tiltRect.top) / Math.max(1, tiltRect.height), 0, 1);
+  tiltedCard.style.setProperty('--tilt-x', `${(0.5 - py) * 5}deg`);
+  tiltedCard.style.setProperty('--tilt-y', `${(px - 0.5) * 6}deg`);
+  tiltedCard.style.setProperty('--shine-x', `${px * 100}%`);
+  tiltedCard.style.setProperty('--shine-y', `${py * 100}%`);
+  tiltedCard.classList.add('is-tilting');
+}
 const grid = element('#writing-grid');
+new MutationObserver(resetTilt).observe(grid, { childList: true });
+addEventListener('scroll', resetTilt, { passive: true });
+addEventListener('resize', resetTilt, { passive: true });
+addEventListener('blur', resetTilt);
 grid.addEventListener(
   'pointermove',
   (event) => {
@@ -153,14 +187,9 @@ grid.addEventListener(
       resetTilt();
       tiltedCard = card;
     }
-    const r = card.getBoundingClientRect();
-    const px = clamp((event.clientX - r.left) / r.width, 0, 1);
-    const py = clamp((event.clientY - r.top) / r.height, 0, 1);
-    card.style.setProperty('--tilt-x', `${(0.5 - py) * 5}deg`);
-    card.style.setProperty('--tilt-y', `${(px - 0.5) * 6}deg`);
-    card.style.setProperty('--shine-x', `${px * 100}%`);
-    card.style.setProperty('--shine-y', `${py * 100}%`);
-    card.classList.add('is-tilting');
+    tiltPointerX = event.clientX;
+    tiltPointerY = event.clientY;
+    if (!tiltFrame) tiltFrame = requestAnimationFrame(updateTilt);
   },
   { passive: true },
 );
@@ -178,8 +207,10 @@ finePointer.addEventListener('change', () => {
 });
 document.addEventListener('visibilitychange', () => {
   root.toggleAttribute('data-motion-suspended', document.hidden);
+  if (document.hidden) resetTilt();
   syncScene();
 });
+hero.dataset.sceneReady = 'true';
 measure();
 applyPreference();
 unfoldScene();
@@ -233,10 +264,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-scene-choice]').forEach((but
       other.setAttribute('aria-pressed', String(other === button));
     });
     if (enabled) unfoldScene();
-    sceneStatus.textContent = {
-      dawn: '晨岚 · 一轮初日照山河',
-      moon: '月白 · 半卷清光入梦来',
-      ink: '墨染 · 山水无言自成诗',
-    }[button.dataset.sceneChoice as 'dawn' | 'moon' | 'ink'];
+    sceneStatus.textContent =
+      sceneDescriptions[button.dataset.sceneChoice as keyof typeof sceneDescriptions];
   });
 });
