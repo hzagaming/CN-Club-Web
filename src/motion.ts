@@ -21,11 +21,6 @@ let targetX = 0,
   targetScroll = 0;
 let heroTop = 0,
   heroHeight = 1;
-let tiltedCard: HTMLElement | null = null;
-let tiltFrame = 0;
-let tiltRect: DOMRect | null = null;
-let tiltPointerX = 0,
-  tiltPointerY = 0;
 const sceneDescriptions = {
   dawn: '晨岚 · 微光穿云，远山渐醒',
   moon: '月白 · 三盏浮灯，一川清梦',
@@ -44,14 +39,6 @@ function play(element: Element, frames: Keyframe[], options: KeyframeAnimationOp
   const forget = () => activeAnimations.delete(animation);
   animation.onfinish = forget;
   animation.oncancel = forget;
-}
-function resetTilt() {
-  cancelAnimationFrame(tiltFrame);
-  tiltFrame = 0;
-  tiltRect = null;
-  if (!tiltedCard) return;
-  tiltedCard.classList.remove('is-tilting');
-  tiltedCard = null;
 }
 function suspend() {
   cancelAnimationFrame(frame);
@@ -81,7 +68,6 @@ function applyPreference() {
   toggle.setAttribute('aria-pressed', String(!enabled));
   label.textContent = enabled ? '暂停动效' : '开启完整动效';
   if (!enabled) {
-    resetTilt();
     x = y = targetX = targetY = scrollDepth = targetScroll = 0;
     layers.forEach((layer) => {
       layer.style.removeProperty('--layer-x');
@@ -153,48 +139,6 @@ if ('IntersectionObserver' in window) {
     .querySelectorAll('.quote-section,.join-art')
     .forEach((element) => ambience.observe(element));
 }
-function updateTilt() {
-  tiltFrame = 0;
-  if (!tiltedCard?.isConnected || !enabled || document.hidden || !finePointer.matches) {
-    resetTilt();
-    return;
-  }
-  // Cache the card geometry until pointer exit or scrolling changes its position.
-  tiltRect ??= tiltedCard.getBoundingClientRect();
-  const px = clamp((tiltPointerX - tiltRect.left) / Math.max(1, tiltRect.width), 0, 1);
-  const py = clamp((tiltPointerY - tiltRect.top) / Math.max(1, tiltRect.height), 0, 1);
-  tiltedCard.style.setProperty('--tilt-x', `${(0.5 - py) * 5}deg`);
-  tiltedCard.style.setProperty('--tilt-y', `${(px - 0.5) * 6}deg`);
-  tiltedCard.style.setProperty('--shine-x', `${px * 100}%`);
-  tiltedCard.style.setProperty('--shine-y', `${py * 100}%`);
-  tiltedCard.classList.add('is-tilting');
-}
-const grid = element('#writing-grid');
-new MutationObserver(resetTilt).observe(grid, { childList: true });
-addEventListener('scroll', resetTilt, { passive: true });
-addEventListener('resize', resetTilt, { passive: true });
-addEventListener('blur', resetTilt);
-grid.addEventListener(
-  'pointermove',
-  (event) => {
-    if (!enabled || !finePointer.matches || event.pointerType === 'touch') return;
-    const card = (event.target as Element | null)?.closest<HTMLElement>('.writing-card');
-    if (!card) {
-      resetTilt();
-      return;
-    }
-    if (tiltedCard !== card) {
-      resetTilt();
-      tiltedCard = card;
-    }
-    tiltPointerX = event.clientX;
-    tiltPointerY = event.clientY;
-    if (!tiltFrame) tiltFrame = requestAnimationFrame(updateTilt);
-  },
-  { passive: true },
-);
-grid.addEventListener('pointerleave', resetTilt);
-grid.addEventListener('focusin', resetTilt);
 toggle.addEventListener('click', () => {
   window.zhuoguangMotion.toggle();
   if (enabled) unfoldScene();
@@ -202,12 +146,10 @@ toggle.addEventListener('click', () => {
 document.addEventListener('zhuoguang:motionchange', applyPreference);
 finePointer.addEventListener('change', () => {
   targetX = targetY = 0;
-  resetTilt();
   schedule();
 });
 document.addEventListener('visibilitychange', () => {
   root.toggleAttribute('data-motion-suspended', document.hidden);
-  if (document.hidden) resetTilt();
   syncScene();
 });
 hero.dataset.sceneReady = 'true';

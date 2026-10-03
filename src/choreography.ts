@@ -129,7 +129,8 @@ const observer =
     : null;
 function observeEntrances(scope: ParentNode = document): void {
   const groups: [string, string][] = [
-    ['.journey-links>a', 'rise'],
+    ['.journey-links>a,.home-directory>a,.page-related a', 'rise'],
+    ['.page-heading,.home-intro', 'heading'],
     ['.section-side', 'book'],
     ['.about-content', 'rise'],
     ['.section-heading', 'heading'],
@@ -343,3 +344,12 @@ pageRoot.dataset.choreographyReady = 'true';
 window.zhuoguangMotion.refresh();
 updateDock();
 openScroll();
+
+if ('IntersectionObserver' in window) {
+  const ambience = new IntersectionObserver((entries) => {
+    entries.forEach((entry) =>
+      entry.target.classList.toggle('ambient-active', entry.isIntersecting),
+    );
+  });
+  document.querySelectorAll('.quote-section,.join-art').forEach((node) => ambience.observe(node));
+}

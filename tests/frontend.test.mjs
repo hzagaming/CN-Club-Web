@@ -2,18 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { JSDOM } from 'jsdom';
-const html = await readFile('public/index.html', 'utf8');
+const html = await readFile('public/writings.html', 'utf8');
+const homeHtml = await readFile('public/index.html', 'utf8');
 const load = async (name) =>
   (await readFile(`js/${name}.js`, 'utf8'))
     .replace(/^import .*?;\n/gm, '')
     .replace(/^export /gm, '');
-const source = (await Promise.all(['dom', 'auth', 'main'].map(load))).join('\n');
+const source = (await Promise.all(['dom', 'auth', 'site', 'main'].map(load))).join('\n');
 const motionSource = (await Promise.all(['motion-preferences', 'dom', 'motion'].map(load))).join(
   '\n',
 );
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-function page(url = 'http://localhost/', response) {
-  const dom = new JSDOM(html, { url, runScripts: 'outside-only', pretendToBeVisual: true });
+function page(url = 'http://localhost/writings.html', response, markup = html) {
+  const dom = new JSDOM(markup, { url, runScripts: 'outside-only', pretendToBeVisual: true });
   const w = dom.window;
   w.matchMedia = () => ({ matches: false, addEventListener() {} });
   w.ResizeObserver = class {
@@ -56,7 +57,7 @@ test('search, category filters, empty state and reset compose correctly', async 
   }
 });
 test('deep links, reading preferences, shelf and share fallback work together', async () => {
-  const d = page('http://localhost/?article=moon');
+  const d = page('http://localhost/writings.html?article=moon');
   try {
     d.window.eval(source);
     const doc = d.window.document;
@@ -139,7 +140,7 @@ test('PHP session connects the form, logs in with CSRF and logs out', async () =
   }
 });
 test('scene selection, replay and pause respect reduced motion', () => {
-  const d = page();
+  const d = page('http://localhost/', undefined, homeHtml);
   try {
     const w = d.window,
       doc = w.document,

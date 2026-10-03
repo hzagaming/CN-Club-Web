@@ -188,3 +188,22 @@ dialog p {
     padding-inline: 6%;
   }
 }
+
+.studio-nav {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 6%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  border-bottom: 1px solid #c8ba9b;
+  font-size: 13px;
+}
+.studio-nav a {
+  color: #5f6958;
+  text-decoration: none;
+}
+.studio-nav a[aria-current='page'] {
+  color: #963a2c;
+  border-bottom: 1px solid currentColor;
+}

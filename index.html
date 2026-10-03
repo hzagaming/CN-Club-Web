@@ -5,26 +5,25 @@
     <script src="js/motion-preferences.js?v=2"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f2eddf" />
-    <meta
-      name="description"
-      content="琢光中文文学社——以文字琢岁月，以热爱聚微光。一起读书、写作，发现中文之美。"
-    />
-    <title>琢光中文文学社 · 以文琢光</title>
+    <meta name="description" content="读书、写作与相逢，从这里开始。" />
+    <title>以文琢光 · 琢光中文文学社</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="style.css?v=4" />
     <link rel="stylesheet" href="classical.css?v=4" />
     <link rel="stylesheet" href="motion.css?v=5" />
     <link rel="stylesheet" href="experience.css?v=4" />
-    <script type="module" src="js/main.js?v=5"></script>
-    <script type="module" src="js/motion.js?v=5"></script>
-    <link rel="stylesheet" href="choreography.css?v=5" />
-    <script type="module" src="js/choreography.js?v=5"></script>
+
+    <link rel="stylesheet" href="choreography.css?v=6" />
+
+    <script type="module" src="js/site.js?v=6"></script>
+    <script type="module" src="js/motion.js?v=6"></script>
+    <script type="module" src="js/choreography.js?v=6"></script>
+    <link rel="stylesheet" href="pages.css?v=6" />
   </head>
-  <body>
-    <div class="page-progress" aria-hidden="true"><span></span></div>
+  <body class="page-home" data-page="home" id="top">
     <a class="skip-link" href="#main">跳至正文</a>
     <header class="header">
-      <a class="brand" href="#" aria-label="琢光中文文学社首页"
+      <a class="brand" href="index.html" aria-label="琢光中文文学社首页"
         ><span class="seal logo-seal">琢<br />光</span
         ><span>琢光<span class="brand-sub">中文文学社</span></span></a
       >
@@ -37,10 +36,11 @@
         目 录 <span>☰</span>
       </button>
       <nav id="navigation" aria-label="主导航">
-        <a href="#writings">文苑</a><a href="#about">关于琢光</a><a href="#activities">雅集</a
-        ><a href="write.html">创作书斋</a>
+        <a href="index.html" aria-current="page">首页</a><a href="writings.html">文苑</a
+        ><a href="about.html">关于琢光</a><a href="activities.html">雅集</a
+        ><a href="join.html">加入琢光</a><a href="write.html">创作书斋</a>
       </nav>
-      <button class="login-button" data-login>社员登录 <span>↗</span></button>
+      <button class="login-button" data-login="">社员登录 <span>↗</span></button>
     </header>
     <main id="main">
       <section class="hero" aria-labelledby="hero-title" data-scene="dawn">
@@ -52,7 +52,7 @@
           <span>一方文苑 · 万千心光</span>
           <div class="hero-edition">
             <span class="issue">琢光手帖 · 创刊序章</span
-            ><button id="motion-toggle" type="button" aria-pressed="false" hidden>
+            ><button id="motion-toggle" type="button" aria-pressed="false" hidden="">
               <span class="motion-dot" aria-hidden="true"></span
               ><span id="motion-label">暂停动效</span>
             </button>
@@ -68,7 +68,7 @@
             在字里行间，照见山河与自己。<br />让每一个热爱文字的你，都有落笔之处。
           </p>
           <div class="hero-actions">
-            <a class="primary-link" href="#writings">入卷 · 读作品 <span>⟶</span></a
+            <a class="primary-link" href="writings.html">入卷 · 读作品 <span>⟶</span></a
             ><a class="secondary-link" href="write.html">执笔 · 写新篇 <span>↗</span></a>
           </div>
           <p class="hero-footnote">阅读无需登录 · 把一份热爱，慢慢写成光</p>
@@ -88,16 +88,21 @@
           <svg viewBox="0 0 900 650" preserveAspectRatio="xMidYMax meet">
             <defs>
               <linearGradient id="ink" x2="0" y2="1">
-                <stop stop-color="#384b42" />
-                <stop offset="1" stop-color="#a5ad98" stop-opacity=".1" />
+                <stop stop-color="#384b42"></stop>
+                <stop offset="1" stop-color="#a5ad98" stop-opacity=".1"></stop>
               </linearGradient>
               <linearGradient id="faint" x2="0" y2="1">
-                <stop stop-color="#9ca791" stop-opacity=".65" />
-                <stop offset="1" stop-color="#c6c8b5" stop-opacity=".08" />
+                <stop stop-color="#9ca791" stop-opacity=".65"></stop>
+                <stop offset="1" stop-color="#c6c8b5" stop-opacity=".08"></stop>
               </linearGradient>
               <filter id="rough">
-                <feTurbulence type="fractalNoise" baseFrequency=".023" numOctaves="3" seed="8" />
-                <feDisplacementMap in="SourceGraphic" scale="15" />
+                <feTurbulence
+                  type="fractalNoise"
+                  baseFrequency=".023"
+                  numOctaves="3"
+                  seed="8"
+                ></feTurbulence>
+                <feDisplacementMap in="SourceGraphic" scale="15"></feDisplacementMap>
               </filter>
             </defs>
             <g class="mountain-stack" filter="url(#rough)">
@@ -107,7 +112,7 @@
                   data-depth="-12"
                   fill="url(#faint)"
                   d="M0 520 90 419 127 449 190 335 220 351 280 240 312 277 347 193 400 304 430 281 499 377 548 252 594 320 647 170 683 231 711 211 782 365 815 309 900 394V650H0Z"
-                />
+                ></path>
               </g>
               <g class="mountain-float middle-float">
                 <path
@@ -116,7 +121,7 @@
                   fill="url(#ink)"
                   opacity=".7"
                   d="M170 650 245 558 290 510 318 525 354 438 393 462 451 320 475 355 500 318 558 412 582 398 619 495 660 460 730 548 760 521 860 624 900 605V650Z"
-                />
+                ></path>
               </g>
               <g class="mountain-float near-float">
                 <path
@@ -125,47 +130,55 @@
                   fill="#485b4b"
                   opacity=".8"
                   d="M520 650 592 610 663 625 733 574 779 584 819 530 866 552 900 520V650Z"
-                />
+                ></path>
               </g>
             </g>
             <g class="gold-ridge" fill="none" stroke="#b29861" stroke-width="1.2">
               <path
                 pathLength="1"
                 d="M190 530 280 430 345 464 451 320 500 318 558 412 582 398 619 495"
-              />
-              <path pathLength="1" d="M560 620 663 625 733 574 779 584 819 530 866 552 900 520" />
+              ></path>
+              <path
+                pathLength="1"
+                d="M560 620 663 625 733 574 779 584 819 530 866 552 900 520"
+              ></path>
             </g>
             <g class="distant-birds" fill="none" stroke="#526050" stroke-width="2" opacity=".5">
-              <path d="m492 198 12-5 10 5m37-39 9-4 8 4m-124 20 8-4 7 3" />
+              <path d="m492 198 12-5 10 5m37-39 9-4 8 4m-124 20 8-4 7 3"></path>
             </g>
             <g class="river-boat">
-              <path d="m242 596 38 1-9 7h-20z" fill="#3e4a3b" />
+              <path d="m242 596 38 1-9 7h-20z" fill="#3e4a3b"></path>
               <path
                 d="m261 595-1-21m0 3 12 15h-12"
                 fill="none"
                 stroke="#3e4a3b"
                 stroke-width="1.4"
-              />
+              ></path>
             </g></svg
           ><svg class="crane-flight" viewBox="0 0 180 110">
             <g class="crane-body">
-              <path d="M63 64Q93 44 117 59L140 72 120 68Q97 74 73 70Z" fill="#efe9d7" />
-              <path d="M108 60Q128 46 145 43L167 48 147 49 125 68" fill="#eee7d3" />
-              <path d="m145 44 6 1-3 5-5-1z" fill="#a54630" />
-              <path d="m157 47 18 3-18 1" fill="#37483c" />
-              <path d="m76 68-42 15m45-12-34 17" fill="none" stroke="#37483c" stroke-width="2" />
+              <path d="M63 64Q93 44 117 59L140 72 120 68Q97 74 73 70Z" fill="#efe9d7"></path>
+              <path d="M108 60Q128 46 145 43L167 48 147 49 125 68" fill="#eee7d3"></path>
+              <path d="m145 44 6 1-3 5-5-1z" fill="#a54630"></path>
+              <path d="m157 47 18 3-18 1" fill="#37483c"></path>
+              <path
+                d="m76 68-42 15m45-12-34 17"
+                fill="none"
+                stroke="#37483c"
+                stroke-width="2"
+              ></path>
               <path
                 class="crane-wing"
                 d="M91 61Q58 28 40 12Q52 45 68 57L43 43Q53 64 77 70Z"
                 fill="#e9e4d4"
                 stroke="#667360"
                 stroke-width=".7"
-              />
+              ></path>
               <path
                 class="crane-wing-tip"
                 d="M40 12 60 30 54 31 68 42 62 43 73 54 66 53Q48 33 40 12"
                 fill="#384b3f"
-              />
+              ></path>
             </g>
           </svg>
           <div class="scene-weather">
@@ -193,247 +206,62 @@
               <i aria-hidden="true"></i>墨染
             </button>
           </div>
-          <button id="replay-scene" type="button" hidden>
+          <button id="replay-scene" type="button" hidden="">
             <span aria-hidden="true">↻</span> 重展此卷</button
           ><span class="scene-instruction" id="scene-status" role="status"
             >移步换景 · 指尖游山</span
           >
         </div>
         <div class="hero-footer">
-          <span>读书 · 写作 · 相逢</span><a href="#about">向下寻光 <span>↓</span></a
+          <span>读书 · 写作 · 相逢</span><a href="about.html">认识琢光 <span>↗</span></a
           ><span>让文字，成为我们的相逢。</span>
         </div>
       </section>
-      <nav class="journey-links" aria-label="探索琢光">
-        <a href="#writings"
-          ><span class="journey-mark" aria-hidden="true">阅</span
-          ><span><strong>在文苑，遇见共鸣</strong><small>散文、诗歌与少年笔下的故事</small></span
-          ><i aria-hidden="true">↗</i></a
-        >
-        <a href="write.html"
-          ><span class="journey-mark" aria-hidden="true">写</span
-          ><span><strong>在书斋，留下心光</strong><small>从第一句话，到属于你的作品</small></span
-          ><i aria-hidden="true">↗</i></a
-        >
-        <a href="#activities"
-          ><span class="journey-mark" aria-hidden="true">聚</span
-          ><span><strong>在雅集，相逢同好</strong><small>共读、共写，一起发现中文之美</small></span
-          ><i aria-hidden="true">↗</i></a
-        >
-      </nav>
-      <section id="about" class="about section">
-        <div class="section-side">
-          <span class="binding" aria-hidden="true"></span
-          ><span class="section-number">卷壹 · 初识琢光</span>
-          <h2>玉不琢，<br />不成器。<br /><em>文有光，</em><br /><em>自成章。</em></h2>
-          <span class="seal about-seal">以文<br />会友</span>
+      <section class="home-overview" aria-labelledby="explore-title">
+        <div class="home-intro">
+          <p class="eyebrow">琢光 · 中文文学社</p>
+          <h2 id="explore-title">今天，想从哪里开始？</h2>
+          <p>读一篇文字，认识一群同好，或写下自己的第一行。</p>
         </div>
-        <div class="about-content">
-          <p class="eyebrow">琢光小序 · 以文会友</p>
-          <h3>把对中文的热爱，<br />写成属于我们的故事。</h3>
-          <p>
-            「琢」，是对一字一句的认真，是反复推敲的耐心；<br />「光」，是阅读时的豁然开朗，也是落笔时的微小勇气。
-          </p>
-          <p>
-            这里是琢光中文文学社。我们因中文相聚，在诗词里遇见远方，在散文里收藏日常，也在彼此的文字中，读懂不一样的青春。
-          </p>
-          <p>
-            不必等到文笔成熟才开始。带一本喜欢的书，带一个未写完的故事，或者，只带一份好奇。让我们一起，慢慢琢，慢慢发光。
-          </p>
-          <div class="values">
-            <span><b>读</b>与古今对话</span><span><b>写</b>为日常留白</span
-            ><span><b>会</b>与同好相逢</span>
-          </div>
-        </div>
-      </section>
-      <section id="writings" class="writings section">
-        <div class="section-heading">
-          <div>
-            <p class="section-number">卷贰 · 纸上春秋</p>
-            <h2>琢光文苑<span>字字有来处，篇篇见少年。</span></h2>
-          </div>
-          <a class="section-action" href="write.html">我也想写一篇 <span>↗</span></a>
-        </div>
-        <div class="writing-search">
-          <label for="writing-search">寻文</label>
-          <div class="search-field">
-            <input
-              id="writing-search"
-              type="search"
-              placeholder="搜索篇名、体裁或文字…"
-              maxlength="100"
-              autocomplete="off"
-              aria-controls="writing-grid"
-            /><button id="clear-search" type="button" hidden>清除</button>
-          </div>
-        </div>
-        <div class="filters" role="group" aria-label="按体裁筛选作品">
-          <button class="active" data-filter="all" aria-pressed="true">全部篇目</button
-          ><button data-filter="散文" aria-pressed="false">散文随笔</button
-          ><button data-filter="诗歌" aria-pressed="false">诗词短章</button
-          ><button data-filter="故事" aria-pressed="false">小说故事</button
-          ><button data-filter="saved" aria-pressed="false">
-            我的藏书 <span id="saved-count">0</span>
-          </button>
-        </div>
-        <p id="writing-results" class="results-count" role="status" aria-live="polite"></p>
-        <div id="writing-grid" class="writing-grid"></div>
-        <div id="writing-empty" class="empty-state" hidden>
-          <span aria-hidden="true">笺</span>
-          <h3>这一页，暂未寻到</h3>
-          <p>试试其他关键词，或回到全部篇目。</p>
-          <button id="reset-search" class="text-button">查看全部篇目</button>
-        </div>
-        <noscript
-          ><p>文苑筛选与全文阅读需要启用 JavaScript。你仍可浏览社团介绍和活动信息。</p></noscript
-        >
-        <p class="collection-note">藏书保存在当前浏览器，无需登录；清除浏览器数据后会移除。</p>
-        <p class="section-note">文苑试阅 · 以下为示范作品，期待正式收录你们的文字。</p>
-      </section>
-      <section class="quote-section">
-        <img class="quote-clouds" src="assets/clouds.svg" alt="" aria-hidden="true" /><span
-          >一 笔 一 画 ， 皆 是 心 光</span
-        >
-        <blockquote>“文章千古事，得失寸心知。”</blockquote>
-        <p>—— 杜甫《偶题》</p>
-        <div aria-hidden="true" class="quote-watermark">文</div>
-      </section>
-      <section id="activities" class="activities section">
-        <div class="section-heading">
-          <div>
-            <p class="section-number">卷叁 · 雅集有约</p>
-            <h2>文字之外，亦有相逢<span>把纸上的共鸣，变成身边的回响。</span></h2>
-          </div>
-        </div>
-        <div class="activity-list">
-          <article>
-            <span class="activity-index">壹</span>
-            <div>
-              <span class="tag">共读</span>
-              <h3>一卷书，一席谈</h3>
-              <p>分享正在读的书，让一个人的阅读，成为一群人的对话。</p>
-            </div>
-            <span class="activity-status">读书分享会 · 筹划中</span>
-          </article>
-          <article>
-            <span class="activity-index">贰</span>
-            <div>
-              <span class="tag">共写</span>
-              <h3>拾起日常，落笔成光</h3>
-              <p>从一个词、一段回忆开始，寻找只属于你的表达。</p>
-            </div>
-            <span class="activity-status">主题写作 · 筹划中</span>
-          </article>
-          <article>
-            <span class="activity-index">叁</span>
-            <div>
-              <span class="tag">共赏</span>
-              <h3>以诗为信，与春相见</h3>
-              <p>读一首喜爱的诗，在声音与停顿之间，听见中文的韵律。</p>
-            </div>
-            <span class="activity-status">诗歌朗诵 · 筹划中</span>
-          </article>
-        </div>
-        <p class="section-note">活动方向预览，具体安排待文学社正式发布。</p>
-      </section>
-      <section id="join" class="join section">
-        <div>
-          <p class="section-number">卷肆 · 同行执笔</p>
-          <h2>下一页，<br />等你来写<span>。</span></h2>
-          <p>无论你是爱读书的人，还是藏着故事的人，<br />愿这里成为你安放热爱的地方。</p>
-          <button class="primary-link" id="join-button">与琢光相遇 <span>⟶</span></button>
-        </div>
-        <div class="join-art" aria-hidden="true">
-          <div class="window-lattice"></div>
-          <span>以文会友</span><span>以光为序</span><i class="seal">琢光</i>
-        </div>
-      </section>
-      <section class="submission-guide section" aria-labelledby="submission-title">
-        <div class="section-heading">
-          <div>
-            <p class="section-number">附卷 · 落笔之前</p>
-            <h2 id="submission-title">
-              让第一篇文字，从这里开始<span>关于投稿与相遇，你或许想知道。</span>
-            </h2>
-          </div>
-          <span class="seal guide-seal" aria-hidden="true">静候<br />佳作</span>
-        </div>
-        <div class="guide-grid">
-          <div class="guide-intro">
-            <span aria-hidden="true">笺</span>
-            <h3>一纸有心，便是好开篇。</h3>
-            <p>
-              写下校园的一幕、一次阅读的回响，或一个想象中的故事。不必急着写得完美，先让文字拥有自己的声音。
-            </p>
-            <a class="text-button" href="#writings">先到文苑读一读 →</a>
-          </div>
-          <div class="guide-questions">
-            <details>
-              <summary>可以准备怎样的作品？</summary>
-              <p>
-                可以从原创散文、诗歌或短篇故事开始。为作品取一个题目，保留你的署名，并检查文字与标点。正式征稿要求以文学社后续公告为准。
-              </p>
-            </details>
-            <details>
-              <summary>现在可以在线写作或报名吗？</summary>
-              <p>
-                社员登录后可进入创作书斋，保存草稿或提交至服务端稿箱。提交不代表录用，稿件不会自动公开。招新报名与编辑审阅后台尚未开放。
-              </p>
-            </details>
-            <details>
-              <summary>文苑里的篇目来自哪里？</summary>
-              <p>
-                目前三篇作品均为网站展示示例，用于预览阅读体验，并非真实社员来稿。后续将替换为经过文学社确认的作品。
-              </p>
-            </details>
-            <details>
-              <summary>没有账号，也可以收藏吗？</summary>
-              <p>
-                可以。打开文章后选择「收入藏书」，再到「我的藏书」查看。收藏仅保存在当前浏览器，不会同步到其他设备。若浏览器禁止存储，收藏只在本次页面打开期间保留。
-              </p>
-            </details>
-          </div>
-        </div>
+        <nav class="home-directory" aria-label="栏目导览">
+          <a href="writings.html"
+            ><span class="directory-number">壹</span
+            ><span><strong>读作品</strong><small>诗词、散文与故事</small></span
+            ><span aria-hidden="true">↗</span></a
+          ><a href="about.html"
+            ><span class="directory-number">贰</span
+            ><span><strong>认识琢光</strong><small>我们的名字与初心</small></span
+            ><span aria-hidden="true">↗</span></a
+          ><a href="activities.html"
+            ><span class="directory-number">叁</span
+            ><span><strong>看看雅集</strong><small>共读、共写与共赏</small></span
+            ><span aria-hidden="true">↗</span></a
+          ><a href="join.html"
+            ><span class="directory-number">肆</span
+            ><span><strong>加入我们</strong><small>给热爱留一个位置</small></span
+            ><span aria-hidden="true">↗</span></a
+          ><a href="guide.html"
+            ><span class="directory-number">伍</span
+            ><span><strong>准备投稿</strong><small>落笔之前的几件小事</small></span
+            ><span aria-hidden="true">↗</span></a
+          >
+        </nav>
       </section>
     </main>
-    <footer>
-      <a class="brand" href="#"
-        ><span class="seal logo-seal">琢<br />光</span
-        ><span>琢光<span class="brand-sub">中文文学社</span></span></a
-      >
+    <footer class="site-footer">
+      <a class="brand" href="index.html">琢光<span class="brand-sub">中文文学社</span></a>
       <p>以文字琢岁月，以热爱聚微光。</p>
-      <span>© <span id="year"></span> 琢光中文文学社</span><a href="write.html">创作书斋</a
-      ><a href="index-lite.html">清简版</a><a href="#">回到卷首 ↑</a>
+      <nav aria-label="页脚导航">
+        <a href="index.html">首页</a><a href="writings.html">文苑</a
+        ><a href="about.html">关于琢光</a><a href="activities.html">雅集</a
+        ><a href="join.html">加入琢光</a><a href="write.html">创作书斋</a
+        ><a href="guide.html">投稿指南</a><a href="index-lite.html">清简版</a>
+      </nav>
+      <small>© <span id="year"></span> 琢光中文文学社</small>
     </footer>
-    <dialog id="reader-dialog" class="reader-dialog" aria-labelledby="reader-title">
-      <button class="dialog-close" data-close aria-label="关闭文章">×</button>
-      <p class="eyebrow" id="reader-category"></p>
-      <h2 id="reader-title"></h2>
-      <div class="reader-tools">
-        <button id="reading-direction" type="button" aria-pressed="false">切换竖排阅读</button
-        ><button id="reading-size" type="button" aria-pressed="false">放大字号</button>
-      </div>
-      <div class="reader-library">
-        <label for="reader-contents">卷内目录</label
-        ><select id="reader-contents" aria-label="选择文章"></select
-        ><button id="save-writing" type="button" aria-pressed="false">收入藏书</button
-        ><button id="share-writing" type="button">复制篇目链接</button>
-      </div>
-      <p id="library-feedback" class="library-feedback" role="status" aria-live="polite"></p>
-      <div id="share-fallback" hidden>
-        <label for="share-url">复制未成功，请手动复制下方链接</label
-        ><input id="share-url" readonly type="url" />
-      </div>
-      <p class="reader-byline">琢光编辑部 · 网站示范篇目</p>
-      <p class="reading-hint" id="reading-hint">横排阅读 · 可调整字号</p>
-      <div id="reader-body" tabindex="0" role="region" aria-label="文章正文"></div>
-      <div class="reader-pagination">
-        <button id="previous-writing" type="button">← 上一篇</button
-        ><span id="reader-position"></span><button id="next-writing" type="button">下一篇 →</button>
-      </div>
-    </dialog>
+
     <dialog id="login-dialog" aria-labelledby="login-title">
-      <button class="dialog-close" data-close aria-label="关闭登录窗口">×</button
+      <button class="dialog-close" data-close="" aria-label="关闭登录窗口">×</button
       ><span class="seal modal-seal">琢光</span>
       <p class="eyebrow">欢迎归来</p>
       <h2 id="login-title">与文字重逢</h2>
@@ -445,7 +273,7 @@
           name="account"
           autocomplete="username"
           placeholder="登录开放后可填写"
-          disabled
+          disabled=""
         /><label for="password">密码</label
         ><input
           id="password"
@@ -453,12 +281,12 @@
           type="password"
           autocomplete="current-password"
           placeholder="登录开放后可填写"
-          disabled
-        /><button id="login-submit" class="primary-link" type="submit" disabled>
+          disabled=""
+        /><button id="login-submit" class="primary-link" type="submit" disabled="">
           正在连接账号服务…
         </button>
       </form>
-      <div id="member-panel" hidden>
+      <div id="member-panel" hidden="">
         <p>你好，<strong id="member-name"></strong>。</p>
         <p>
           文苑与本机藏书均可继续使用。账号收藏同步尚在筹备；现在可进入书斋写作、保存草稿并提交稿件。
@@ -469,15 +297,8 @@
       <p id="auth-feedback" role="status" aria-live="polite"></p>
       <small>账号由文学社管理员分配，请勿与他人共享密码。</small>
     </dialog>
-    <dialog id="join-dialog" aria-labelledby="join-title">
-      <button class="dialog-close" data-close aria-label="关闭加入说明">×</button>
-      <p class="eyebrow">执笔同行</p>
-      <h2 id="join-title">给热爱留一个位置</h2>
-      <p>招新渠道仍在筹备。已有账号的社员可登录后进入创作书斋，保存或提交作品。</p>
-      <p>你可以先准备一篇原创作品，或记下一本想与大家分享的书。期待与你相遇。</p>
-      <button class="primary-link" data-close>期待相逢 <span>⟶</span></button>
-    </dialog>
-    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden>
+
+    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden="">
       <div class="motion-panel-info">
         <span class="motion-sample" aria-hidden="true"><i></i><i></i><i></i></span
         ><strong id="motion-status" role="status">正在检查动效</strong

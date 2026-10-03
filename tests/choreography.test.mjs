@@ -9,10 +9,11 @@ const read = async (name) =>
 const boot = await read('motion-preferences');
 const shared = await read('dom');
 const motion = await read('motion');
+const cards = await read('cards');
 const score = await read('choreography');
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-async function setup(studio = false, reduced = false) {
-  const html = await readFile(studio ? 'public/write.html' : 'public/index.html', 'utf8');
+async function setup(studio = false, reduced = false, page = 'index.html') {
+  const html = await readFile(studio ? 'public/write.html' : `public/${page}`, 'utf8');
   const dom = new JSDOM(html, {
     url: 'http://localhost/',
     runScripts: 'outside-only',
@@ -80,7 +81,15 @@ async function setup(studio = false, reduced = false) {
       bottom: 700,
       right: 1200,
     });
-  w.eval(boot + '\n' + shared + '\n' + (studio ? '' : motion) + '\n' + score);
+  w.eval(
+    boot +
+      '\n' +
+      shared +
+      '\n' +
+      (studio ? '' : page === 'index.html' ? motion : cards) +
+      '\n' +
+      score,
+  );
   w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
   const tick = () => {
     const pending = [...frames.values()];
@@ -100,10 +109,10 @@ test('headings unfold and section/dialog animations work after the hero leaves v
     assert.ok(c.doc.querySelectorAll('.ink-character').length >= 10);
     assert.equal(c.doc.querySelectorAll('.scroll-shutters').length, 1);
     c.visible(c.doc.querySelector('.hero'), false);
-    const heading = c.doc.querySelector('.section-heading');
+    const heading = c.doc.querySelector('.home-intro');
     c.visible(heading);
     assert.equal(heading.classList.contains('is-entering'), true);
-    const dialog = c.doc.querySelector('#reader-dialog');
+    const dialog = c.doc.querySelector('#login-dialog');
     dialog.open = true;
     await flush();
     assert.ok(c.animations.some((a) => a.target === dialog && !a.cancelled));
@@ -116,7 +125,7 @@ test('headings unfold and section/dialog animations work after the hero leaves v
   }
 });
 test('newly filtered cards are observed and paused content remains readable', async () => {
-  const c = await setup();
+  const c = await setup(false, false, 'writings.html');
   try {
     const grid = c.doc.querySelector('#writing-grid');
     grid.innerHTML = '<article class="writing-card">一篇文字</article>';
@@ -167,7 +176,7 @@ test('studio controls are independent and explicit full motion overrides system 
 test('backgrounding cancels one-shot effects and explicit replay restarts them', async () => {
   const c = await setup();
   try {
-    const heading = c.doc.querySelector('.section-heading');
+    const heading = c.doc.querySelector('.home-intro');
     c.visible(heading);
     Object.defineProperty(c.doc, 'hidden', { value: true, configurable: true });
     c.doc.dispatchEvent(new c.w.Event('visibilitychange'));
@@ -250,7 +259,7 @@ test('every system reduced-motion CSS rule permits an explicit full-motion choic
 });
 
 test('card tilt batches pointer events, caches geometry and cleans up on pause or removal', async () => {
-  const c = await setup();
+  const c = await setup(false, false, 'writings.html');
   try {
     c.visible(c.doc.querySelector('.hero'), false);
     const grid = c.doc.querySelector('#writing-grid');
@@ -301,7 +310,7 @@ test('card tilt batches pointer events, caches geometry and cleans up on pause o
   }
 });
 test('reader turns follow navigation direction, replace pending turns and stop on close', async () => {
-  const c = await setup();
+  const c = await setup(false, false, 'writings.html');
   try {
     const dialog = c.doc.querySelector('#reader-dialog');
     const body = c.doc.querySelector('#reader-body');

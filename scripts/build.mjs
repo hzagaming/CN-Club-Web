@@ -4,6 +4,12 @@ await mkdir('public', { recursive: true });
 for (const name of [
   'index.html',
   'index-lite.html',
+  'about.html',
+  'writings.html',
+  'activities.html',
+  'join.html',
+  'guide.html',
+  'pages.css',
   'write.html',
   'write.css',
   'style.css',

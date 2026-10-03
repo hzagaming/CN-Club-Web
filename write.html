@@ -8,17 +8,22 @@
     <meta name="robots" content="noindex" />
     <link rel="icon" href="assets/seal.svg" />
     <link rel="stylesheet" href="lite.css" />
-    <link rel="stylesheet" href="write.css" />
+    <link rel="stylesheet" href="write.css?v=6" />
     <script type="module" src="js/write.js"></script>
     <link rel="stylesheet" href="choreography.css?v=5" />
-    <script type="module" src="js/choreography.js?v=5"></script>
+    <script type="module" src="js/choreography.js?v=6"></script>
   </head>
-  <body>
+  <body data-page="write">
     <a class="skip" href="#workspace">跳至编辑区</a>
     <header>
       <a class="brand" href="index.html">琢光 <small>中文文学社</small></a
       ><a href="index.html">返回文苑 →</a>
     </header>
+    <nav class="studio-nav" aria-label="主导航">
+      <a href="index.html">首页</a><a href="writings.html">文苑</a><a href="about.html">关于琢光</a
+      ><a href="activities.html">雅集</a><a href="join.html">加入琢光</a
+      ><a href="write.html" aria-current="page">创作书斋</a><a href="guide.html">投稿指南</a>
+    </nav>
     <main>
       <p class="eyebrow">一人一案 · 一字一光</p>
       <h1>把心事，写成文章。</h1>
@@ -26,11 +31,11 @@
         草稿仅自己可见。提交后进入服务端稿箱，暂不公开展示。<br />当前尚无编辑审阅后台，请勿将提交状态视为录用。
       </p>
       <p id="studio-status" role="status" aria-live="polite">正在连接书斋…</p>
-      <div id="studio-locked" hidden>
+      <div id="studio-locked" hidden="">
         <p>请先在主页登录社员账号，再回到这里。</p>
-        <a href="index.html#join">返回主页登录 →</a>
+        <a href="index.html?login=1">返回主页登录 →</a>
       </div>
-      <div id="studio" hidden>
+      <div id="studio" hidden="">
         <div class="studio-heading">
           <span id="studio-member"></span><button id="new-draft" type="button">＋ 新笺</button>
         </div>
@@ -45,7 +50,12 @@
             <form id="writing-form">
               <div class="field">
                 <label for="draft-title">篇名</label
-                ><input id="draft-title" maxlength="60" required placeholder="为这篇文字取个名字" />
+                ><input
+                  id="draft-title"
+                  maxlength="60"
+                  required=""
+                  placeholder="为这篇文字取个名字"
+                />
               </div>
               <div class="field">
                 <label for="draft-category">体裁</label
@@ -70,7 +80,7 @@
               </div>
               <div class="writing-actions">
                 <button id="save-draft" type="submit">保存草稿</button
-                ><button id="submit-draft" type="button" disabled>提交稿件</button
+                ><button id="submit-draft" type="button" disabled="">提交稿件</button
                 ><button id="export-draft" type="button">下载文字备份</button>
               </div>
               <p id="save-status" role="status" aria-live="polite"></p>
@@ -95,7 +105,7 @@
       </div>
     </dialog>
     <footer>琢光中文文学社 · 我的书斋</footer>
-    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden>
+    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden="">
       <div class="motion-panel-info">
         <span class="motion-sample" aria-hidden="true"><i></i><i></i><i></i></span
         ><strong id="motion-status" role="status">正在检查动效</strong

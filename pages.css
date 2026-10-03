@@ -1,0 +1,371 @@
+/* Multipage layout: compact headings, continuous content, and real navigation. */
+html {
+  scroll-behavior: auto;
+}
+.header nav {
+  gap: 22px;
+}
+.header nav a {
+  white-space: nowrap;
+  font-size: 13px;
+}
+.header nav a[aria-current='page'] {
+  color: var(--red);
+}
+.header nav a[aria-current='page']:after {
+  opacity: 1;
+}
+.page-content {
+  width: min(1180px, 88%);
+  margin: 0 auto;
+  padding: 32px 0 56px;
+}
+.breadcrumbs {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+.breadcrumbs a:hover {
+  color: var(--red);
+}
+.page-heading {
+  margin: 32px 0;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--line);
+}
+.page-heading .eyebrow {
+  margin-bottom: 10px;
+}
+.page-heading h1 {
+  font: 500 clamp(34px, 4vw, 52px) / 1.4 var(--calligraphy);
+  letter-spacing: 3px;
+  margin: 0 0 12px;
+}
+.page-heading > p:last-child {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.9;
+  max-width: 650px;
+}
+.interior-page .section {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 24px 0;
+  min-height: 0;
+  border: 0;
+}
+.interior-page .section:before,
+.interior-page .section:after {
+  display: none;
+}
+.interior-page .about {
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 64px;
+}
+.interior-page .section-side {
+  min-height: 0;
+  padding: 30px;
+}
+.interior-page .section-side h2 {
+  font-size: 32px;
+}
+.interior-page .about-content {
+  padding: 0;
+}
+.interior-page .about-content h3 {
+  font-size: 28px;
+  margin-top: 0;
+}
+.interior-page .quote-section {
+  margin: 32px 0 0;
+  padding: 35px 24px;
+  min-height: 0;
+}
+.interior-page .quote-section blockquote {
+  font-size: clamp(20px, 3vw, 30px);
+}
+.interior-page .quote-watermark {
+  display: none;
+}
+.page-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 24px;
+  color: var(--muted);
+}
+.page-actions a {
+  color: var(--red);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+}
+.interior-page .writing-grid {
+  margin-top: 24px;
+}
+.interior-page .activity-list article {
+  padding-block: 28px;
+}
+.page-notice {
+  background: #e9e9db;
+  border-left: 2px solid #85917b;
+  padding: 24px 28px;
+  margin-top: 24px;
+}
+.page-notice h2 {
+  font: 500 22px/1.5 var(--serif);
+  margin: 0 0 12px;
+}
+.page-notice p {
+  font-size: 14px;
+  line-height: 1.9;
+  max-width: 690px;
+  color: var(--muted);
+}
+.page-notice a {
+  display: inline-block;
+  font-size: 13px;
+  margin-top: 14px;
+  color: var(--red);
+}
+.interior-page .join {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 64px;
+}
+.interior-page .join h2 {
+  font-size: 42px;
+  line-height: 1.5;
+}
+.interior-page .join-art {
+  position: relative;
+  inset: auto;
+  width: 260px;
+  height: 310px;
+  opacity: 0.75;
+}
+.interior-page .guide-grid {
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 48px;
+}
+.interior-page .guide-intro {
+  padding: 28px;
+}
+.page-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.page-related a {
+  font-size: 13px;
+  color: var(--red);
+  padding: 10px 0;
+}
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 32px;
+  align-items: center;
+  padding: 36px 6%;
+  border-top: 1px solid var(--line);
+}
+.site-footer > p {
+  flex: 1;
+}
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  width: 100%;
+  font-size: 12px;
+}
+.site-footer small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.page-home .hero {
+  min-height: 630px;
+}
+.home-overview {
+  width: min(1180px, 88%);
+  margin: 38px auto 60px;
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 64px;
+}
+.home-intro {
+  padding-top: 20px;
+}
+.home-intro h2 {
+  font: 500 clamp(24px, 3vw, 32px) / 1.5 var(--serif);
+  margin: 12px 0;
+}
+.home-intro > p:last-child {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--muted);
+  max-width: 310px;
+}
+.home-directory {
+  border-top: 1px solid var(--line);
+}
+.home-directory > a {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 12px;
+  border-bottom: 1px solid var(--line);
+  transition: background 250ms;
+}
+.home-directory > a:hover,
+.home-directory > a:focus-visible {
+  background: #ddd9c740;
+}
+.directory-number {
+  color: #998764;
+  font: 23px var(--calligraphy);
+}
+.home-directory strong {
+  font-size: 17px;
+  font-weight: 500;
+}
+.home-directory small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.home-directory > a > span:last-child {
+  margin-left: auto;
+  color: var(--red);
+}
+/* Keep motion attached to the content, with shorter entrances on reading pages. */
+html[data-motion='on'] .interior-page [data-entrance].is-entering {
+  animation-name: paper-rise;
+  animation-duration: 650ms;
+}
+html[data-motion='on'] .home-directory a:hover > span:last-child {
+  animation: arrow-glide 700ms ease-in-out alternate 2;
+}
+@media (min-width: 641px) and (max-width: 1100px) {
+  .header {
+    padding-inline: 4%;
+    gap: 15px;
+  }
+  .header nav {
+    gap: 12px;
+  }
+  .header nav a {
+    font-size: 12px;
+  }
+  .header .brand {
+    font-size: 24px;
+  }
+  .header .login-button {
+    font-size: 11px;
+    padding-inline: 10px;
+  }
+  .interior-page .about,
+  .interior-page .join {
+    gap: 30px;
+  }
+}
+@media (max-width: 640px) {
+  .page-content {
+    width: 88%;
+    padding-top: 24px;
+  }
+  .page-heading {
+    margin: 24px 0 16px;
+    padding-bottom: 24px;
+  }
+  .page-heading h1 {
+    font-size: 36px;
+  }
+  .page-heading > p:last-child {
+    font-size: 14px;
+  }
+  .header nav {
+    gap: 0;
+  }
+  .interior-page .about,
+  .interior-page .join,
+  .interior-page .guide-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .interior-page .section-side {
+    display: none;
+  }
+  .interior-page .about-content h3 {
+    font-size: 25px;
+  }
+  .interior-page .join h2 {
+    font-size: 36px;
+  }
+  .interior-page .join-art {
+    display: none;
+  }
+  .interior-page .guide-intro {
+    padding: 20px;
+  }
+  .page-actions {
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 12px;
+  }
+  .page-related {
+    gap: 6px 22px;
+    margin-top: 28px;
+  }
+  .page-home .hero {
+    min-height: 0;
+  }
+  .home-overview {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 24px auto 40px;
+  }
+  .home-intro {
+    padding-top: 0;
+  }
+  .home-intro > p:last-child {
+    max-width: none;
+  }
+  .home-directory > a {
+    padding: 18px 6px;
+    gap: 20px;
+  }
+  .site-footer {
+    padding-top: 28px;
+    gap: 16px;
+  }
+  .site-footer > p {
+    flex-basis: 100%;
+  }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .header {
+    height: auto;
+    flex-wrap: wrap;
+    padding-block: 12px;
+    gap: 8px 20px;
+  }
+  .header .login-button {
+    margin-left: auto;
+  }
+  .header nav {
+    order: 3;
+    flex-basis: 100%;
+    margin: 0;
+    justify-content: space-between;
+  }
+}

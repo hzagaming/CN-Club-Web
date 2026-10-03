@@ -1,5 +1,5 @@
 import { element } from './dom.js';
-import { initializeAuth } from './auth.js';
+import { openDialog } from './site.js';
 
 const writings = [
   {
@@ -61,7 +61,6 @@ const grid = element('#writing-grid');
 const search = element<HTMLInputElement>('#writing-search');
 let currentFilter = 'all';
 let currentWriting = 0;
-let lastFocused: HTMLElement | null = null;
 
 function renderWritings() {
   const query = search.value.trim().toLocaleLowerCase();
@@ -121,42 +120,8 @@ element('#reset-search').addEventListener('click', () => {
 });
 renderWritings();
 
-function openDialog(id: string) {
-  closeMenu();
-  lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-  element<HTMLDialogElement>(`#${id}`).showModal();
-  document.body.classList.add('modal-open');
-}
-document.querySelectorAll<HTMLDialogElement>('dialog').forEach((dialog) => {
-  dialog
-    .querySelectorAll('[data-close]')
-    .forEach((button) => button.addEventListener('click', () => dialog.close()));
-  let pointerStartedOutside = false;
-  function isOutside(event: MouseEvent) {
-    const r = dialog.getBoundingClientRect();
-    return (
-      event.target === dialog &&
-      (event.clientX < r.left ||
-        event.clientX > r.right ||
-        event.clientY < r.top ||
-        event.clientY > r.bottom)
-    );
-  }
-  dialog.addEventListener('pointerdown', (event) => {
-    pointerStartedOutside = isOutside(event);
-  });
-  dialog.addEventListener('click', (event) => {
-    if (pointerStartedOutside && isOutside(event)) dialog.close();
-    pointerStartedOutside = false;
-  });
-  dialog.addEventListener('close', () => {
-    document.body.classList.remove('modal-open');
-    if (dialog.id === 'reader-dialog') clearArticleLink();
-    if (lastFocused?.isConnected) lastFocused.focus({ preventScroll: true });
-    else element<HTMLInputElement>('#writing-search').focus({ preventScroll: true });
-  });
-});
 const reader = element<HTMLDialogElement>('#reader-dialog');
+reader.addEventListener('close', clearArticleLink);
 const readerBody = element('#reader-body');
 function showWriting(index: number) {
   if (!writings[index]) return;
@@ -197,52 +162,6 @@ for (const [selector, offset] of [
     readerBody.focus({ preventScroll: true });
   });
 }
-document
-  .querySelectorAll<HTMLButtonElement>('[data-login]')
-  .forEach((button) => button.addEventListener('click', () => openDialog('login-dialog')));
-void initializeAuth();
-element('#join-button').addEventListener('click', () => openDialog('join-dialog'));
-
-const menu = element('.menu-toggle');
-const navigation = element('#navigation');
-function closeMenu() {
-  menu.setAttribute('aria-expanded', 'false');
-  menu.setAttribute('aria-label', '打开导航');
-  navigation.classList.remove('open');
-}
-menu.addEventListener('click', () => {
-  const expanded = menu.getAttribute('aria-expanded') !== 'true';
-  menu.setAttribute('aria-expanded', String(expanded));
-  menu.setAttribute('aria-label', expanded ? '关闭导航' : '打开导航');
-  navigation.classList.toggle('open', expanded);
-});
-navigation
-  .querySelectorAll<HTMLAnchorElement>('a')
-  .forEach((link) => link.addEventListener('click', closeMenu));
-document.addEventListener('click', (event) => {
-  if (
-    !navigation.contains(event.target as Node | null) &&
-    !menu.contains(event.target as Node | null)
-  )
-    closeMenu();
-});
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') {
-    closeMenu();
-    menu.focus();
-  }
-});
-element('.header').addEventListener('focusout', (event) => {
-  if (
-    !(event.currentTarget as HTMLElement).contains(
-      (event as FocusEvent).relatedTarget as Node | null,
-    )
-  )
-    closeMenu();
-});
-matchMedia('(max-width: 640px)').addEventListener('change', closeMenu);
-element('#year').textContent = String(new Date().getFullYear());
-
 const directionButton = element('#reading-direction');
 const sizeButton = element('#reading-size');
 function applyReadingPreference(button: HTMLElement, key: 'vertical' | 'large', enabled: boolean) {
@@ -278,34 +197,6 @@ for (const [button, key] of [
     }
   });
 }
-const sections = [...document.querySelectorAll('main section[id]')];
-const links = [...navigation.querySelectorAll<HTMLAnchorElement>('a')];
-const progress = element('.page-progress span');
-let scrollPending = false;
-function updateScrollState() {
-  const available = document.documentElement.scrollHeight - innerHeight;
-  progress.style.transform = `scaleX(${available > 0 ? Math.min(1, Math.max(0, scrollY / available)) : 0})`;
-  const current = sections.filter((section) => section.getBoundingClientRect().top <= 150).at(-1);
-  links.forEach((link) => {
-    if (current && link.hash === `#${current.id}`) link.setAttribute('aria-current', 'location');
-    else link.removeAttribute('aria-current');
-  });
-  scrollPending = false;
-}
-addEventListener(
-  'scroll',
-  () => {
-    if (!scrollPending) {
-      scrollPending = true;
-      requestAnimationFrame(updateScrollState);
-    }
-  },
-  { passive: true },
-);
-addEventListener('resize', updateScrollState);
-if ('ResizeObserver' in window) new ResizeObserver(updateScrollState).observe(document.body);
-updateScrollState();
-
 // Local reading shelf and shareable links; no account or remote storage required.
 function updateLibraryControls() {
   const item = writings[currentWriting];

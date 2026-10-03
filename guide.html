@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN" data-motion="on" data-motion-mode="auto">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="js/motion-preferences.js?v=2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f2eddf" />
+    <meta name="description" content="从准备作品，到保存与提交，给第一次落笔的你。" />
+    <title>投稿指南 · 琢光中文文学社</title>
+    <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css?v=4" />
+    <link rel="stylesheet" href="classical.css?v=4" />
+    <link rel="stylesheet" href="motion.css?v=5" />
+    <link rel="stylesheet" href="experience.css?v=4" />
+
+    <link rel="stylesheet" href="choreography.css?v=6" />
+
+    <script type="module" src="js/site.js?v=6"></script>
+    <script type="module" src="js/choreography.js?v=6"></script>
+    <link rel="stylesheet" href="pages.css?v=6" />
+  </head>
+  <body class="interior-page" data-page="guide" id="top">
+    <a class="skip-link" href="#main">跳至正文</a>
+    <header class="header">
+      <a class="brand" href="index.html" aria-label="琢光中文文学社首页"
+        ><span class="seal logo-seal">琢<br />光</span
+        ><span>琢光<span class="brand-sub">中文文学社</span></span></a
+      >
+      <button
+        class="menu-toggle"
+        aria-label="打开导航"
+        aria-expanded="false"
+        aria-controls="navigation"
+      >
+        目 录 <span>☰</span>
+      </button>
+      <nav id="navigation" aria-label="主导航">
+        <a href="index.html">首页</a><a href="writings.html">文苑</a
+        ><a href="about.html">关于琢光</a><a href="activities.html">雅集</a
+        ><a href="join.html">加入琢光</a><a href="write.html">创作书斋</a>
+      </nav>
+      <button class="login-button" data-login="">社员登录 <span>↗</span></button>
+    </header>
+    <main id="main" class="page-content">
+      <nav class="breadcrumbs" aria-label="当前位置">
+        <a href="index.html">首页</a><span aria-hidden="true">／</span
+        ><span aria-current="page">投稿指南</span>
+      </nav>
+      <header class="page-heading">
+        <p class="eyebrow">琢光中文文学社</p>
+        <h1 id="page-title">投稿指南</h1>
+        <p>从准备作品，到保存与提交，给第一次落笔的你。</p>
+      </header>
+      <section class="submission-guide section" aria-labelledby="page-title">
+        <div class="guide-grid">
+          <div class="guide-intro">
+            <span aria-hidden="true">笺</span>
+            <h3>一纸有心，便是好开篇。</h3>
+            <p>
+              写下校园的一幕、一次阅读的回响，或一个想象中的故事。不必急着写得完美，先让文字拥有自己的声音。
+            </p>
+            <a class="text-button" href="writings.html">先到文苑读一读 →</a>
+          </div>
+          <div class="guide-questions">
+            <details>
+              <summary>可以准备怎样的作品？</summary>
+              <p>
+                可以从原创散文、诗歌或短篇故事开始。为作品取一个题目，保留你的署名，并检查文字与标点。正式征稿要求以文学社后续公告为准。
+              </p>
+            </details>
+            <details>
+              <summary>现在可以在线写作或报名吗？</summary>
+              <p>
+                社员登录后可进入创作书斋，保存草稿或提交至服务端稿箱。提交不代表录用，稿件不会自动公开。招新报名与编辑审阅后台尚未开放。
+              </p>
+            </details>
+            <details>
+              <summary>文苑里的篇目来自哪里？</summary>
+              <p>
+                目前三篇作品均为网站展示示例，用于预览阅读体验，并非真实社员来稿。后续将替换为经过文学社确认的作品。
+              </p>
+            </details>
+            <details>
+              <summary>没有账号，也可以收藏吗？</summary>
+              <p>
+                可以。打开文章后选择「收入藏书」，再到「我的藏书」查看。收藏仅保存在当前浏览器，不会同步到其他设备。若浏览器禁止存储，收藏只在本次页面打开期间保留。
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+      <nav class="page-related" aria-label="继续浏览">
+        <a href="writings.html">读一篇文字 ↗</a><a href="guide.html">查看投稿指南 ↗</a
+        ><a href="write.html">进入创作书斋 ↗</a>
+      </nav>
+    </main>
+    <footer class="site-footer">
+      <a class="brand" href="index.html">琢光<span class="brand-sub">中文文学社</span></a>
+      <p>以文字琢岁月，以热爱聚微光。</p>
+      <nav aria-label="页脚导航">
+        <a href="index.html">首页</a><a href="writings.html">文苑</a
+        ><a href="about.html">关于琢光</a><a href="activities.html">雅集</a
+        ><a href="join.html">加入琢光</a><a href="write.html">创作书斋</a
+        ><a href="guide.html">投稿指南</a><a href="index-lite.html">清简版</a>
+      </nav>
+      <small>© <span id="year"></span> 琢光中文文学社</small>
+    </footer>
+
+    <dialog id="login-dialog" aria-labelledby="login-title">
+      <button class="dialog-close" data-close="" aria-label="关闭登录窗口">×</button
+      ><span class="seal modal-seal">琢光</span>
+      <p class="eyebrow">欢迎归来</p>
+      <h2 id="login-title">与文字重逢</h2>
+      <p id="auth-description">正在检查账号服务。你可以先浏览文苑。</p>
+      <form id="login-form">
+        <label for="account">社员账号</label
+        ><input
+          id="account"
+          name="account"
+          autocomplete="username"
+          placeholder="登录开放后可填写"
+          disabled=""
+        /><label for="password">密码</label
+        ><input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="登录开放后可填写"
+          disabled=""
+        /><button id="login-submit" class="primary-link" type="submit" disabled="">
+          正在连接账号服务…
+        </button>
+      </form>
+      <div id="member-panel" hidden="">
+        <p>你好，<strong id="member-name"></strong>。</p>
+        <p>
+          文苑与本机藏书均可继续使用。账号收藏同步尚在筹备；现在可进入书斋写作、保存草稿并提交稿件。
+        </p>
+        <a href="write.html" class="primary-link">进入创作书斋 →</a>
+        <button id="logout-button" class="primary-link" type="button">退出登录</button>
+      </div>
+      <p id="auth-feedback" role="status" aria-live="polite"></p>
+      <small>账号由文学社管理员分配，请勿与他人共享密码。</small>
+    </dialog>
+
+    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden="">
+      <div class="motion-panel-info">
+        <span class="motion-sample" aria-hidden="true"><i></i><i></i><i></i></span
+        ><strong id="motion-status" role="status">正在检查动效</strong
+        ><small id="motion-startup-hint">正在启动</small>
+      </div>
+      <div class="motion-panel-actions">
+        <button type="button" data-motion-preset="auto" aria-pressed="true">跟随系统</button
+        ><button type="button" data-motion-preset="full" aria-pressed="false">完整动效</button
+        ><button
+          type="button"
+          class="motion-dock-state"
+          data-motion-command="toggle"
+          aria-pressed="false"
+        >
+          暂停动效</button
+        ><button type="button" data-motion-command="replay">重播此屏 ↻</button>
+      </div>
+    </div>
+  </body>
+</html>
