@@ -6,6 +6,7 @@ const read = async (name) =>
   (await readFile(`js/${name}.js`, 'utf8'))
     .replace(/^import .*?;\n/gm, '')
     .replace(/^export /gm, '');
+const boot = await read('motion-preferences');
 const shared = await read('dom');
 const motion = await read('motion');
 const score = await read('choreography');
@@ -77,7 +78,8 @@ async function setup(studio = false, reduced = false) {
       bottom: 700,
       right: 1200,
     });
-  w.eval(shared + '\n' + (studio ? '' : motion) + '\n' + score);
+  w.eval(boot + '\n' + shared + '\n' + (studio ? '' : motion) + '\n' + score);
+  w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
   const tick = () => {
     const pending = [...frames.values()];
     frames.clear();
@@ -132,7 +134,7 @@ test('newly filtered cards are observed and paused content remains readable', as
     c.dom.window.close();
   }
 });
-test('studio has independent motion controls and system reduction disables motion', async () => {
+test('studio controls are independent and explicit full motion overrides system reduction', async () => {
   const c = await setup(true);
   try {
     assert.equal(c.doc.documentElement.dataset.motion, 'on');
@@ -144,10 +146,18 @@ test('studio has independent motion controls and system reduction disables motio
   }
   const reduced = await setup(false, true);
   try {
-    assert.equal(reduced.doc.querySelector('.motion-dock-state').disabled, true);
+    assert.equal(reduced.doc.querySelector('.motion-dock-state').disabled, false);
     assert.equal(reduced.doc.querySelector('.motion-dock button:last-child').disabled, true);
     assert.equal(reduced.animations.length, 0);
     assert.equal(reduced.doc.querySelector('.hero').classList.contains('is-unfolding'), false);
+    reduced.doc.querySelector('[data-motion-preset="full"]').click();
+    reduced.tick();
+    assert.equal(reduced.doc.documentElement.dataset.motion, 'on');
+    assert.equal(reduced.doc.documentElement.dataset.motionMode, 'full');
+    assert.equal(reduced.doc.querySelector('.motion-dock button:last-child').disabled, false);
+    assert.ok(reduced.animations.length > 0);
+    reduced.doc.querySelector('[data-motion-preset="auto"]').click();
+    assert.equal(reduced.doc.documentElement.dataset.motion, 'off');
   } finally {
     reduced.dom.window.close();
   }
@@ -168,5 +178,71 @@ test('backgrounding cancels one-shot effects and explicit replay restarts them',
     assert.equal(heading.classList.contains('is-entering'), true);
   } finally {
     c.dom.window.close();
+  }
+});
+
+async function bootOnly(url, stored) {
+  const html = await readFile('public/index.html', 'utf8');
+  const dom = new JSDOM(html, { url, runScripts: 'outside-only' });
+  dom.window.matchMedia = () => ({ matches: true, addEventListener() {} });
+  if (stored) dom.window.localStorage.setItem('zhuoguang-motion', stored);
+  dom.window.eval(boot);
+  dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+  return dom;
+}
+test('file preview exposes CSS motion controls without module execution or storage', async () => {
+  const dom = await bootOnly('file:///club/index.html');
+  try {
+    const doc = dom.window.document;
+    assert.equal(doc.querySelector('#motion-panel').hidden, false);
+    assert.equal(doc.documentElement.dataset.choreographyReady, undefined);
+    assert.equal(doc.documentElement.dataset.motion, 'off');
+    assert.match(doc.querySelector('#motion-status').textContent, /系统减弱/);
+    assert.match(doc.querySelector('#motion-startup-hint').textContent, /文件预览/);
+    doc.querySelector('[data-motion-preset="full"]').click();
+    assert.equal(doc.documentElement.dataset.motion, 'on');
+    doc.querySelector('[data-motion-command="replay"]').click();
+    assert.equal(doc.documentElement.classList.contains('css-replaying'), true);
+    doc.querySelector('[data-motion-command="toggle"]').click();
+    assert.equal(doc.documentElement.dataset.motion, 'off');
+  } finally {
+    dom.window.close();
+  }
+});
+test('full-motion preview link overrides a previously saved pause without erasing it', async () => {
+  const dom = await bootOnly('http://localhost/?motion=full', 'off');
+  try {
+    assert.equal(dom.window.document.documentElement.dataset.motion, 'on');
+    assert.equal(dom.window.document.documentElement.dataset.motionMode, 'full');
+    assert.equal(dom.window.localStorage.getItem('zhuoguang-motion'), 'off');
+    assert.match(dom.window.document.querySelector('#motion-status').textContent, /完整动效已开启/);
+    dom.window.document.querySelector('[data-motion-preset="full"]').click();
+    assert.equal(dom.window.localStorage.getItem('zhuoguang-motion'), 'full');
+  } finally {
+    dom.window.close();
+  }
+});
+test('every system reduced-motion CSS rule permits an explicit full-motion choice', async () => {
+  const dom = new JSDOM('<!doctype html><html><head></head><body></body></html>');
+  try {
+    for (const name of ['style', 'classical', 'experience', 'motion', 'choreography']) {
+      const style = dom.window.document.createElement('style');
+      style.textContent = await readFile(`${name}.css`, 'utf8');
+      dom.window.document.head.append(style);
+      const mediaRules = [...style.sheet.cssRules].filter((rule) =>
+        rule.conditionText?.includes('prefers-reduced-motion'),
+      );
+      assert.ok(mediaRules.length > 0, `${name}: reduced-motion guard exists`);
+      for (const media of mediaRules)
+        for (const rule of media.cssRules)
+          for (const selector of rule.selectorText.split(','))
+            assert.match(
+              selector.trim(),
+              /^html:not\(\[data-motion-mode=['"]full['"]\]\)/,
+              `${name}: ${selector}`,
+            );
+    }
+  } finally {
+    dom.window.close();
   }
 });

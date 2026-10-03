@@ -552,12 +552,12 @@ footer > a:last-child {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html:not([data-motion-mode='full']) {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  html:not([data-motion-mode='full']) *,
+  html:not([data-motion-mode='full']) *::before,
+  html:not([data-motion-mode='full']) *::after {
     animation: none !important;
     transition: none !important;
   }

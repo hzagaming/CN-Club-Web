@@ -625,21 +625,21 @@ html[data-motion-suspended] *:after {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *:before,
-  *:after {
+  html:not([data-motion-mode='full']) *,
+  html:not([data-motion-mode='full']) *:before,
+  html:not([data-motion-mode='full']) *:after {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
   }
-  [data-entrance],
-  .ink-character {
+  html:not([data-motion-mode='full']) [data-entrance],
+  html:not([data-motion-mode='full']) .ink-character {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
   }
-  .scroll-shutters,
-  .ink-ripple {
+  html:not([data-motion-mode='full']) .scroll-shutters,
+  html:not([data-motion-mode='full']) .ink-ripple {
     display: none !important;
   }
 }
@@ -652,5 +652,390 @@ html[data-motion-suspended] *:after {
   to {
     opacity: 0.12;
     transform: translateY(0);
+  }
+}
+
+/* A CSS-first baseline makes motion visible even when ES modules cannot load. */
+.motion-dock {
+  display: block;
+  max-width: calc(100vw - 24px);
+  padding: 10px 12px;
+}
+.motion-panel-info {
+  position: relative;
+  padding-left: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.motion-panel-info strong {
+  font: 12px/1.5 var(--serif, 'Songti SC', serif);
+  font-weight: 500;
+  color: #314a39;
+  letter-spacing: 1px;
+}
+.motion-panel-info small {
+  font: 10px/1.5 var(--serif, 'Songti SC', serif);
+  color: #737760;
+  max-width: 290px;
+}
+.motion-panel-actions {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.motion-panel-actions button {
+  min-height: 38px;
+  padding: 7px 10px;
+  font-size: 10px;
+}
+.motion-panel-actions [aria-pressed='true'][data-motion-preset] {
+  background: #dce4cf;
+  color: #314a39;
+}
+.motion-dock-state:before {
+  display: none;
+}
+.motion-sample {
+  position: absolute;
+  left: 1px;
+  top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+.motion-sample i {
+  display: block;
+  width: 3px;
+  height: 7px;
+  background: #a65238;
+  transform-origin: center;
+  border-radius: 2px;
+}
+html[data-motion='on'] .motion-sample i {
+  animation: motion-signal 1.2s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .motion-sample i:nth-child(2) {
+  animation-delay: -0.4s;
+}
+html[data-motion='on'] .motion-sample i:nth-child(3) {
+  animation-delay: -0.8s;
+}
+@keyframes motion-signal {
+  from {
+    transform: scaleY(0.55);
+    opacity: 0.45;
+  }
+  to {
+    transform: scaleY(2.6);
+    opacity: 1;
+  }
+}
+body {
+  padding-bottom: 112px;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero-copy {
+  animation: paper-rise 1.3s var(--motion-ease) both;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .far-float {
+  animation: far-breathe 8s ease-in-out infinite alternate;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .middle-float {
+  animation: middle-breathe 7s ease-in-out -2s infinite alternate;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .near-float {
+  animation: near-breathe 9s ease-in-out -4s infinite alternate;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .crane-flight {
+  animation: crane-glide 12s ease-in-out infinite alternate;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .crane-wing,
+html[data-motion='on']:not([data-choreography-ready]) .hero .crane-wing-tip {
+  animation: wing-beat 3s ease-in-out infinite alternate;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .mist {
+  animation: mist-travel 9s ease-in-out infinite alternate;
+}
+html[data-motion='on']:not([data-choreography-ready]) .hero .sun {
+  animation: sun-sway 8s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .header .brand {
+  animation: brand-arrive 1.4s var(--motion-ease) both;
+}
+html[data-motion='on'] .header nav a {
+  animation: nav-arrive 1s var(--motion-ease) both;
+}
+html[data-motion='on'] .header nav a:nth-child(2) {
+  animation-delay: 0.12s;
+}
+html[data-motion='on'] .header nav a:nth-child(3) {
+  animation-delay: 0.24s;
+}
+html[data-motion='on'] .header nav a:nth-child(4) {
+  animation-delay: 0.36s;
+}
+html[data-motion='on'] .header .login-button {
+  animation: nav-arrive 1s var(--motion-ease) 0.45s both;
+}
+html[data-motion='on'] .hero .hero-footnote {
+  animation: paper-rise 1.5s var(--motion-ease) 0.6s both;
+}
+html[data-motion='on'] .hero-top {
+  animation: nav-arrive 1.1s var(--motion-ease) both;
+}
+html[data-motion='on'] .hero-footer {
+  animation: footer-line 1.6s var(--motion-ease) both;
+}
+html[data-motion='on'] .scene-choices button {
+  animation: filter-imprint 0.8s var(--motion-ease) both;
+}
+html[data-motion='on'] .scene-choices button:nth-child(2) {
+  animation-delay: 0.12s;
+}
+html[data-motion='on'] .scene-choices button:nth-child(3) {
+  animation-delay: 0.24s;
+}
+html[data-motion='on'] .primary-link:hover,
+html[data-motion='on'] .primary-link:focus-visible {
+  animation: button-lift 600ms var(--motion-ease) both;
+}
+html[data-motion='on'] .secondary-link:hover span {
+  animation: arrow-glide 0.7s ease-in-out infinite alternate;
+}
+html[data-motion='on'] .login-button:hover,
+html[data-motion='on'] .menu-toggle:hover {
+  animation: filter-imprint 0.55s var(--motion-ease);
+}
+html[data-motion='on'] .seal:hover {
+  animation: small-stamp 0.7s var(--motion-ease);
+}
+html[data-motion='on'] .writing-search:focus-within {
+  animation: search-awaken 0.5s ease-out;
+}
+html[data-motion='on'] .values span:hover b {
+  animation: value-flourish 0.7s var(--motion-ease);
+  display: inline-block;
+}
+html[data-motion='on'] .guide-questions details[open] {
+  animation: faq-unfold 0.6s var(--motion-ease);
+}
+html[data-motion='on'] .section-action:hover span,
+html[data-motion='on'] footer a:hover {
+  animation: arrow-glide 0.7s ease-in-out alternate 2;
+}
+html[data-motion='on'] .is-entering .section-number,
+html[data-motion='on'] .is-entering .eyebrow {
+  animation: ink-caption 0.85s var(--motion-ease) both;
+}
+html[data-motion='on'] .is-entering p:not(.section-number):not(.eyebrow) {
+  animation: paper-rise 0.95s var(--motion-ease) 0.2s both;
+}
+html[data-motion='on'] .is-entering .values span {
+  animation: paper-rise 0.9s var(--motion-ease) 0.3s both;
+}
+html[data-motion='on'] .is-entering .values span:nth-child(2) {
+  animation-delay: 0.42s;
+}
+html[data-motion='on'] .is-entering .values span:nth-child(3) {
+  animation-delay: 0.54s;
+}
+html[data-motion='on'] .is-entering .about-seal {
+  animation: seal-landing 0.9s var(--motion-ease) 0.5s both;
+}
+html[data-motion='on'] .is-entering .card-copy > * {
+  animation: paper-rise 0.8s var(--motion-ease) 0.15s both;
+}
+html[data-motion='on'] .is-entering .card-copy > h3 {
+  animation-delay: 0.25s;
+}
+html[data-motion='on'] .is-entering .card-copy > p {
+  animation-delay: 0.35s;
+}
+html[data-motion='on'] .is-entering .card-copy > .card-bottom {
+  animation-delay: 0.45s;
+}
+html[data-motion='on'] .is-entering .activity-index {
+  animation: seal-landing 0.9s var(--motion-ease) 0.1s both;
+}
+html[data-motion='on'] .is-entering .activity-status {
+  animation: paper-rise 0.9s var(--motion-ease) 0.3s both;
+}
+html[data-motion='on'] .writing-card:hover .card-title {
+  animation: ink-caption 0.65s var(--motion-ease);
+}
+html[data-motion='on'] .writing-card:hover .read-button {
+  animation: arrow-glide 0.7s ease-in-out alternate 2;
+}
+html[data-motion='on'] .reader-dialog[open] .reader-tools button,
+html[data-motion='on'] .reader-dialog[open] .reader-library {
+  animation: paper-rise 0.55s var(--motion-ease) 0.12s both;
+}
+html[data-motion='on'] .reader-dialog[open] #reader-body p {
+  animation: paper-rise 0.7s var(--motion-ease) both;
+}
+html[data-motion='on'] .reader-dialog[open] #reader-body p:nth-child(2) {
+  animation-delay: 0.1s;
+}
+html[data-motion='on'] .reader-dialog[open] #reader-body p:nth-child(3) {
+  animation-delay: 0.2s;
+}
+html[data-motion='on'] .reader-dialog[open] #reader-body p:nth-child(4) {
+  animation-delay: 0.3s;
+}
+html[data-motion='on'] #login-dialog[open] form > *,
+html[data-motion='on'] #join-dialog[open] p {
+  animation: paper-rise 0.6s var(--motion-ease) 0.1s both;
+}
+html[data-motion='on'] .studio-layout .field {
+  animation: paper-rise 0.9s var(--motion-ease) both;
+}
+html[data-motion='on'] .studio-layout .field:nth-child(2) {
+  animation-delay: 0.1s;
+}
+html[data-motion='on'] .studio-layout .field:nth-child(3) {
+  animation-delay: 0.2s;
+}
+html[data-motion='on'] #draft-list > button {
+  animation: paper-rise 0.6s var(--motion-ease) both;
+}
+html[data-motion='on'] .writing-actions > button:hover {
+  animation: button-lift 0.5s var(--motion-ease) both;
+}
+html[data-motion='on'].css-replaying .hero-copy,
+html[data-motion='on'].css-replaying .hero-top,
+html[data-motion='on'].css-replaying .hero-footer {
+  animation-name: css-replay-rise;
+  animation-duration: 1.5s;
+}
+html[data-motion='on'].css-replaying .landscape {
+  animation: css-replay-rise 2s var(--motion-ease) both;
+}
+@keyframes sun-sway {
+  from {
+    translate: 0 5px;
+    opacity: 0.65;
+  }
+  to {
+    translate: 0 -7px;
+    opacity: 0.9;
+  }
+}
+@keyframes brand-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(-22px) rotate(-3deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotate(0);
+  }
+}
+@keyframes nav-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes footer-line {
+  from {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes button-lift {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -3px;
+  }
+}
+@keyframes arrow-glide {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 4px -2px;
+  }
+}
+@keyframes search-awaken {
+  from {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.05);
+  }
+  to {
+    filter: brightness(1);
+  }
+}
+@keyframes value-flourish {
+  from {
+    transform: translateY(0) rotate(-9deg) scale(0.9);
+  }
+  to {
+    transform: translateY(0) rotate(0) scale(1);
+  }
+}
+@keyframes faq-unfold {
+  from {
+    opacity: 0.45;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ink-caption {
+  from {
+    opacity: 0.1;
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes css-replay-rise {
+  from {
+    opacity: 0.05;
+    transform: translateY(35px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 640px) {
+  .motion-dock {
+    right: 8px;
+    bottom: 8px;
+    padding: 8px 9px;
+    max-width: calc(100vw - 16px);
+  }
+  .motion-panel-info strong {
+    font-size: 11px;
+  }
+  .motion-panel-info small {
+    font-size: 9px;
+    max-width: 250px;
+  }
+  .motion-panel-actions button {
+    padding: 7px 9px;
+    font-size: 10px;
+  }
+  .motion-panel-info {
+    margin-bottom: 5px;
   }
 }

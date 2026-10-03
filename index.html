@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-motion="on" data-motion-mode="auto">
   <head>
     <meta charset="UTF-8" />
+    <script src="js/motion-preferences.js?v=2"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f2eddf" />
     <meta
@@ -10,14 +11,14 @@
     />
     <title>琢光中文文学社 · 以文琢光</title>
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="classical.css" />
-    <link rel="stylesheet" href="motion.css?v=2" />
-    <link rel="stylesheet" href="experience.css?v=3" />
+    <link rel="stylesheet" href="style.css?v=4" />
+    <link rel="stylesheet" href="classical.css?v=4" />
+    <link rel="stylesheet" href="motion.css?v=4" />
+    <link rel="stylesheet" href="experience.css?v=4" />
     <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/motion.js?v=2"></script>
-    <link rel="stylesheet" href="choreography.css?v=1" />
-    <script type="module" src="js/choreography.js?v=1"></script>
+    <script type="module" src="js/motion.js?v=4"></script>
+    <link rel="stylesheet" href="choreography.css?v=2" />
+    <script type="module" src="js/choreography.js?v=2"></script>
   </head>
   <body>
     <div class="page-progress" aria-hidden="true"><span></span></div>
@@ -468,5 +469,24 @@
       <p>你可以先准备一篇原创作品，或记下一本想与大家分享的书。期待与你相遇。</p>
       <button class="primary-link" data-close>期待相逢 <span>⟶</span></button>
     </dialog>
+    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden>
+      <div class="motion-panel-info">
+        <span class="motion-sample" aria-hidden="true"><i></i><i></i><i></i></span
+        ><strong id="motion-status" role="status">正在检查动效</strong
+        ><small id="motion-startup-hint">正在启动</small>
+      </div>
+      <div class="motion-panel-actions">
+        <button type="button" data-motion-preset="auto" aria-pressed="true">跟随系统</button
+        ><button type="button" data-motion-preset="full" aria-pressed="false">完整动效</button
+        ><button
+          type="button"
+          class="motion-dock-state"
+          data-motion-command="toggle"
+          aria-pressed="false"
+        >
+          暂停动效</button
+        ><button type="button" data-motion-command="replay">重播此屏 ↻</button>
+      </div>
+    </div>
   </body>
 </html>

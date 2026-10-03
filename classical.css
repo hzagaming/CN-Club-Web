@@ -801,7 +801,7 @@ dialog h2 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .writing-card:hover {
+  html:not([data-motion-mode='full']) .writing-card:hover {
     transform: none;
   }
 }

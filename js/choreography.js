@@ -2,7 +2,6 @@
 /** Site-wide choreography; no content is hidden until an animation is actually running. */
 const pageRoot = document.documentElement;
 const pageHero = document.querySelector('.hero');
-const systemMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const precisePointer = matchMedia('(hover: hover) and (pointer: fine)');
 const entranceElements = new Set();
 const visibleElements = new Set();
@@ -12,28 +11,9 @@ const transientAnimations = new Set();
 let heroTimer;
 let redrawFrame = 0;
 let rippleCount = 0;
-let storedPause = false;
-try {
-    storedPause = localStorage.getItem('zhuoguang-motion') === 'off';
-}
-catch {
-    /* Optional. */
-}
-if (!pageHero)
-    pageRoot.dataset.motion = systemMotion.matches || storedPause ? 'off' : 'on';
-const motionAllowed = () => pageRoot.dataset.motion === 'on' && !systemMotion.matches && !document.hidden;
-const dock = document.createElement('div');
-dock.className = 'motion-dock';
-dock.setAttribute('role', 'group');
-dock.setAttribute('aria-label', '全站动效控制');
-const stateButton = document.createElement('button');
-stateButton.type = 'button';
-stateButton.className = 'motion-dock-state';
-const replayButton = document.createElement('button');
-replayButton.type = 'button';
-replayButton.textContent = '重播此屏 ↻';
-dock.append(stateButton, replayButton);
-document.body.append(dock);
+const motionAllowed = () => window.zhuoguangMotion.enabled && !document.hidden;
+const dock = document.querySelector('#motion-panel');
+const replayButton = dock.querySelector('[data-motion-command="replay"]');
 function trackAnimation(target, frames, options) {
     if (!motionAllowed() || !target.animate)
         return;
@@ -54,13 +34,6 @@ function cancelMotion() {
 }
 function updateDock() {
     const on = motionAllowed();
-    stateButton.textContent = systemMotion.matches
-        ? '系统已减弱动效'
-        : pageRoot.dataset.motion === 'on'
-            ? '动效已开启 · 暂停'
-            : '动效已暂停 · 开启';
-    stateButton.disabled = systemMotion.matches;
-    stateButton.setAttribute('aria-pressed', String(pageRoot.dataset.motion !== 'on'));
     replayButton.disabled = !on;
     pageRoot.toggleAttribute('data-motion-suspended', document.hidden);
     if (!on)
@@ -70,23 +43,6 @@ function updateDock() {
             if (!playedElements.has(node))
                 enter(node);
 }
-stateButton.addEventListener('click', () => {
-    if (systemMotion.matches)
-        return;
-    const homeToggle = document.querySelector('#motion-toggle');
-    if (homeToggle)
-        homeToggle.click();
-    else {
-        pageRoot.dataset.motion = pageRoot.dataset.motion === 'on' ? 'off' : 'on';
-        try {
-            localStorage.setItem('zhuoguang-motion', pageRoot.dataset.motion);
-        }
-        catch {
-            /* Session only. */
-        }
-        updateDock();
-    }
-});
 function splitHeading() {
     const heading = document.querySelector('.hero h1');
     if (!heading || heading.dataset.lettered)
@@ -220,7 +176,7 @@ if (writingGrid)
             }
         observeEntrances(writingGrid);
     }).observe(writingGrid, { childList: true });
-replayButton.addEventListener('click', () => {
+document.addEventListener('zhuoguang:replay', () => {
     if (!motionAllowed())
         return;
     if (pageHero &&
@@ -327,18 +283,8 @@ if (feedback)
             ], { duration: 400, easing: 'ease-out' });
     }).observe(feedback, { childList: true, characterData: true, subtree: true });
 document.addEventListener('zhuoguang:motionchange', updateDock);
-systemMotion.addEventListener('change', () => {
-    if (!pageHero) {
-        try {
-            storedPause = localStorage.getItem('zhuoguang-motion') === 'off';
-        }
-        catch {
-            /* Optional. */
-        }
-        pageRoot.dataset.motion = systemMotion.matches || storedPause ? 'off' : 'on';
-    }
-    updateDock();
-});
 document.addEventListener('visibilitychange', updateDock);
+pageRoot.dataset.choreographyReady = 'true';
+window.zhuoguangMotion.refresh();
 updateDock();
 openScroll();

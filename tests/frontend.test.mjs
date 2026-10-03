@@ -8,7 +8,9 @@ const load = async (name) =>
     .replace(/^import .*?;\n/gm, '')
     .replace(/^export /gm, '');
 const source = (await Promise.all(['dom', 'auth', 'main'].map(load))).join('\n');
-const motionSource = (await Promise.all(['dom', 'motion'].map(load))).join('\n');
+const motionSource = (await Promise.all(['motion-preferences', 'dom', 'motion'].map(load))).join(
+  '\n',
+);
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 function page(url = 'http://localhost/', response) {
   const dom = new JSDOM(html, { url, runScripts: 'outside-only', pretendToBeVisual: true });
@@ -169,7 +171,13 @@ test('scene selection, replay and pause respect reduced motion', () => {
     const reduced = queries.get('(prefers-reduced-motion: reduce)');
     reduced.matches = true;
     reduced.change();
-    assert.equal(doc.querySelector('#motion-toggle').disabled, true);
+    assert.equal(doc.querySelector('#motion-toggle').disabled, false);
+    doc.querySelector('#motion-toggle').click();
+    assert.equal(doc.documentElement.dataset.motion, 'on');
+    assert.equal(doc.documentElement.dataset.motionMode, 'full');
+    assert.equal(doc.querySelector('#replay-scene').disabled, false);
+    w.zhuoguangMotion.setMode('auto');
+    assert.equal(doc.documentElement.dataset.motion, 'off');
   } finally {
     d.window.close();
   }

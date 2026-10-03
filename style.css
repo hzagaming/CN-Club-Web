@@ -1066,10 +1066,10 @@ body.modal-open {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html:not([data-motion-mode='full']) {
     scroll-behavior: auto;
   }
-  * {
+  html:not([data-motion-mode='full']) * {
     transition: none !important;
   }
 }

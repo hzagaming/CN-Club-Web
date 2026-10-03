@@ -6,16 +6,10 @@ const toggle = element<HTMLButtonElement>('#motion-toggle');
 const label = element('#motion-label');
 const replay = element<HTMLButtonElement>('#replay-scene');
 const sceneStatus = element('#scene-status');
-const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
 const layers = [...hero.querySelectorAll<HTMLElement | SVGElement>('[data-depth]')];
 const activeAnimations = new Set<Animation>();
-let optedOut = false;
-try {
-  optedOut = localStorage.getItem('zhuoguang-motion') === 'off';
-} catch {
-  /* Optional preference. */
-}
 let enabled = false;
 let sceneVisible = true;
 let frame = 0;
@@ -63,20 +57,16 @@ function syncScene() {
   schedule();
 }
 function applyPreference() {
-  enabled = !optedOut && !reduced.matches;
+  enabled = window.zhuoguangMotion.enabled;
   root.dataset.motion = enabled ? 'on' : 'off';
   toggle.hidden = false;
-  toggle.disabled = reduced.matches;
+  toggle.disabled = false;
   replay.hidden = false;
   replay.disabled = !enabled;
   replay.title = !enabled ? '先开启动效后，即可重播山水展卷' : '重新播放山水展卷';
-  sceneStatus.textContent = reduced.matches
-    ? '已遵循系统的减少动态效果设置'
-    : enabled
-      ? '云起 · 山行 · 鹤归'
-      : '动效已暂停，可在右上角开启';
+  sceneStatus.textContent = enabled ? '云起 · 山行 · 鹤归' : '动效已关闭，可点击开启完整动效';
   toggle.setAttribute('aria-pressed', String(!enabled));
-  label.textContent = reduced.matches ? '系统已减弱动效' : enabled ? '暂停动效' : '开启动效';
+  label.textContent = enabled ? '暂停动效' : '开启完整动效';
   if (!enabled) {
     x = y = targetX = targetY = scrollDepth = targetScroll = 0;
     layers.forEach((layer) => {
@@ -85,7 +75,6 @@ function applyPreference() {
     });
   }
   syncScene();
-  document.dispatchEvent(new Event('zhuoguang:motionchange'));
 }
 function tick() {
   frame = 0;
@@ -178,16 +167,10 @@ grid.addEventListener(
 grid.addEventListener('pointerleave', resetTilt);
 grid.addEventListener('focusin', resetTilt);
 toggle.addEventListener('click', () => {
-  optedOut = !optedOut;
-  try {
-    localStorage.setItem('zhuoguang-motion', optedOut ? 'off' : 'on');
-  } catch {
-    /* Session toggle still works. */
-  }
-  applyPreference();
+  window.zhuoguangMotion.toggle();
   if (enabled) unfoldScene();
 });
-reduced.addEventListener('change', applyPreference);
+document.addEventListener('zhuoguang:motionchange', applyPreference);
 finePointer.addEventListener('change', () => {
   targetX = targetY = 0;
   resetTilt();

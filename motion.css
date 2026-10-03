@@ -362,19 +362,19 @@ html[data-motion='off'] *:after {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero *,
-  .hero *:before,
-  .hero *:after {
+  html:not([data-motion-mode='full']) .hero *,
+  html:not([data-motion-mode='full']) .hero *:before,
+  html:not([data-motion-mode='full']) .hero *:after {
     animation: none !important;
   }
-  [data-depth] {
+  html:not([data-motion-mode='full']) [data-depth] {
     --layer-x: 0px !important;
     --layer-y: 0px !important;
   }
-  .writing-card {
+  html:not([data-motion-mode='full']) .writing-card {
     transform: none !important;
   }
-  .primary-link:hover span {
+  html:not([data-motion-mode='full']) .primary-link:hover span {
     transform: none;
   }
 }
