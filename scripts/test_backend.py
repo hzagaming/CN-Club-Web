@@ -30,7 +30,7 @@ with tempfile.TemporaryDirectory(prefix='zhuoguang-test-') as folder:
     assert cli('create-user', 'reader', '重复账号', password=password + '\n').returncode != 0
     with sqlite3.connect(db_path) as db:
         assert db.execute('SELECT password_hash FROM users').fetchone()[0] != password
-        assert db.execute('PRAGMA user_version').fetchone()[0] == 1
+        assert db.execute('PRAGMA user_version').fetchone()[0] == 2
         try:
             db.execute("INSERT INTO users(account,display_name,password_hash,role) VALUES ('invalid','x','x','owner')")
             raise AssertionError('SQL role constraint missing')
@@ -80,8 +80,36 @@ with tempfile.TemporaryDirectory(prefix='zhuoguang-test-') as folder:
             assert next(iter(jar)).value != before_cookie, 'session fixation protection'
             assert logged['data']['csrfToken'] != csrf, 'CSRF rotation'
             assert request('/api/auth/session')[1]['data']['user']['account'] == 'reader'
+            write_csrf = logged['data']['csrfToken']
+            draft = {'id': 'draft-integration-0001', 'version': 0, 'title': '我的第一篇', 'category': 'essay', 'body': '窗外的风，翻过书页。'}
+            assert request('/api/manuscripts', draft)[0] == 403
+            code, result, _ = request('/api/manuscripts', draft, write_csrf)
+            assert code == 201 and result['data']['version'] == 1
+            assert request('/api/manuscripts')[1]['data']['items'][0]['title'] == draft['title']
+            assert request('/api/manuscripts?id=' + draft['id'])[1]['data']['body'] == draft['body']
+            assert request('/api/manuscripts', draft, write_csrf)[0] == 409
+            draft['version'] = 1
+            draft['body'] = '修改过的正文。'
+            code, result, _ = request('/api/manuscripts', draft, write_csrf)
+            assert code == 200 and result['data']['version'] == 2
+            assert request('/api/manuscripts/submit', {'id': draft['id'], 'version': 1}, write_csrf)[0] == 409
+            code, submitted, _ = request('/api/manuscripts/submit', {'id': draft['id'], 'version': 2}, write_csrf)
+            assert code == 200 and submitted['data']['status'] == 'submitted'
+            assert request('/api/manuscripts/submit', {'id': draft['id'], 'version': 2}, write_csrf)[0] == 200
+            draft['version'] = 3
+            assert request('/api/manuscripts', draft, write_csrf)[0] == 409
+            assert cli('create-user', 'other', '另一位社员', password=password + '\n').returncode == 0
+            other = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            token2 = request('/api/auth/session', opener=other)[1]['data']['csrfToken']
+            other_session = request('/api/auth/login', {'account': 'other', 'password': password}, token2, opener=other)[1]['data']
+            assert request('/api/manuscripts', opener=other)[1]['data']['items'] == []
+            assert request('/api/manuscripts?id=' + draft['id'], opener=other)[0] == 404
+            assert request('/api/manuscripts', draft, other_session['csrfToken'], opener=other)[0] == 404
+            assert request('/api/manuscripts/submit', {'id': draft['id'], 'version': 3}, other_session['csrfToken'], opener=other)[0] == 404
+
             assert request('/api/auth/logout', {}, csrf)[0] == 403
             assert request('/api/auth/logout', {}, logged['data']['csrfToken'])[1]['data']['user'] is None
+            assert request('/api/manuscripts')[0] == 401
             status, session, _ = request('/api/auth/session')
             csrf = session['data']['csrfToken']
             with sqlite3.connect(db_path) as db: db.execute('UPDATE users SET active = 0 WHERE account = ?', ('reader',))
@@ -101,7 +129,7 @@ with tempfile.TemporaryDirectory(prefix='zhuoguang-test-') as folder:
             assert request('/index-lite.html')[0] == 200
             assert request('/js/main.js')[0] == 200
             assert request('/api/unknown')[0] == 404
-            print('PASS: real PHP/SQLite initialization, account hashing, login/logout, CSRF, session rotation, validation, rate limiting and private-file isolation')
+            print('PASS: real PHP/SQLite initialization, account hashing, login/logout, CSRF, session rotation, validation, rate limiting, manuscript lifecycle, ownership isolation and stale-write protection')
         finally:
             process.terminate()
             try: process.wait(timeout=5)

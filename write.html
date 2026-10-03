@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>我的书斋 · 琢光中文文学社</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="assets/seal.svg" />
+    <link rel="stylesheet" href="lite.css" />
+    <link rel="stylesheet" href="write.css" />
+    <script type="module" src="js/write.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#workspace">跳至编辑区</a>
+    <header>
+      <a class="brand" href="index.html">琢光 <small>中文文学社</small></a
+      ><a href="index.html">返回文苑 →</a>
+    </header>
+    <main>
+      <p class="eyebrow">一人一案 · 一字一光</p>
+      <h1>把心事，写成文章。</h1>
+      <p class="intro">
+        草稿仅自己可见。提交后进入服务端稿箱，暂不公开展示。<br />当前尚无编辑审阅后台，请勿将提交状态视为录用。
+      </p>
+      <p id="studio-status" role="status" aria-live="polite">正在连接书斋…</p>
+      <div id="studio-locked" hidden>
+        <p>请先在主页登录社员账号，再回到这里。</p>
+        <a href="index.html#join">返回主页登录 →</a>
+      </div>
+      <div id="studio" hidden>
+        <div class="studio-heading">
+          <span id="studio-member"></span><button id="new-draft" type="button">＋ 新笺</button>
+        </div>
+        <div class="studio-layout">
+          <aside aria-label="我的稿件">
+            <h2>我的稿笺</h2>
+            <button id="refresh-drafts" type="button">刷新列表</button>
+            <p id="list-status" role="status"></p>
+            <div id="draft-list"></div>
+          </aside>
+          <section id="workspace">
+            <form id="writing-form">
+              <div class="field">
+                <label for="draft-title">篇名</label
+                ><input id="draft-title" maxlength="60" required placeholder="为这篇文字取个名字" />
+              </div>
+              <div class="field">
+                <label for="draft-category">体裁</label
+                ><select id="draft-category">
+                  <option value="essay">散文随笔</option>
+                  <option value="poetry">诗词短章</option>
+                  <option value="story">小说故事</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="draft-body">正文</label
+                ><textarea
+                  id="draft-body"
+                  maxlength="10000"
+                  rows="18"
+                  placeholder="从一句话开始……"
+                ></textarea>
+              </div>
+              <div class="writing-meta">
+                <span id="word-count">0 / 10000 字</span
+                ><span id="draft-state">新稿 · 尚未保存</span>
+              </div>
+              <div class="writing-actions">
+                <button id="save-draft" type="submit">保存草稿</button
+                ><button id="submit-draft" type="button" disabled>提交稿件</button
+                ><button id="export-draft" type="button">下载文字备份</button>
+              </div>
+              <p id="save-status" role="status" aria-live="polite"></p>
+              <p class="note">
+                草稿需手动保存到服务器；网络错误时文字会留在当前页面。离开前请保存或下载备份。
+              </p>
+            </form>
+          </section>
+        </div>
+      </div>
+      <noscript
+        ><p>书斋需要 JavaScript。你仍可访问<a href="index-lite.html">清简版文苑</a>。</p></noscript
+      >
+    </main>
+    <dialog id="confirm-submit" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">将这一页，交给琢光。</h2>
+      <p>提交后稿件将锁定，不可继续编辑。提交不代表录用，亦不会自动发布到网站。</p>
+      <p>请确认这是你的原创作品，且已检查姓名、正文和需要保护的个人信息。</p>
+      <div class="writing-actions">
+        <button id="confirm-send" type="button">确认提交</button
+        ><button id="cancel-send" type="button">再看看</button>
+      </div>
+    </dialog>
+    <footer>琢光中文文学社 · 我的书斋</footer>
+  </body>
+</html>

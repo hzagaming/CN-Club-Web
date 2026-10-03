@@ -8,9 +8,9 @@ header('X-Content-Type-Options: nosniff');
 try {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    $methods = ['/api/auth/session' => 'GET', '/api/auth/login' => 'POST', '/api/auth/logout' => 'POST'];
+    $methods = ['/api/auth/session' => 'GET', '/api/auth/login' => 'POST', '/api/auth/logout' => 'POST', '/api/manuscripts' => ['GET','POST'], '/api/manuscripts/submit' => 'POST'];
     if (!isset($methods[$path])) fail('接口不存在。', 404);
-    if ($method !== $methods[$path]) { header('Allow: ' . $methods[$path]); fail('请求方法不支持。', 405); }
+    if (!in_array($method, (array)$methods[$path], true)) { header('Allow: ' . implode(', ', (array)$methods[$path])); fail('请求方法不支持。', 405); }
     $db = database();
     ini_set('session.use_strict_mode', '1');
     ini_set('session.use_only_cookies', '1');
@@ -23,6 +23,7 @@ try {
         session_regenerate_id(true);
     }
     $_SESSION['last_seen'] = time();
+    if (str_starts_with($path, '/api/manuscripts')) { require __DIR__ . '/manuscripts.php'; exit; }
     if ($method === 'GET') session_response($db);
     $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!$token || !hash_equals(csrf_token(), $token)) fail('页面会话已更新，请重试。', 403);
@@ -58,5 +59,5 @@ try {
     session_response($db);
 } catch (Throwable $error) {
     error_log('Zhuoguang API error: ' . $error->getMessage());
-    fail('账号服务暂不可用，请稍后重试。', 503);
+    fail('网站服务暂不可用，请稍后重试。', 503);
 }

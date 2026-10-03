@@ -43,3 +43,18 @@ CREATE TABLE IF NOT EXISTS activities (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 PRAGMA user_version = 1;
+
+CREATE TABLE IF NOT EXISTS manuscripts (
+  id TEXT PRIMARY KEY,
+  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  category TEXT NOT NULL CHECK(category IN ('essay','poetry','story')),
+  body TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','submitted')),
+  version INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  submitted_at TEXT
+);
+CREATE INDEX IF NOT EXISTS manuscripts_author_updated ON manuscripts(author_id, updated_at);
+PRAGMA user_version = 2;

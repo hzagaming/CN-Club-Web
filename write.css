@@ -1,0 +1,190 @@
+header,
+main,
+footer {
+  max-width: 1180px;
+}
+h1 {
+  font-size: clamp(30px, 5vw, 52px);
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  background: #f8f0df;
+  border: 1px solid #b6a280;
+  padding: 8px 16px;
+  min-height: 44px;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #963a2c;
+  outline-offset: 3px;
+}
+[hidden] {
+  display: none !important;
+}
+.studio-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-block: 3px double #b6a280;
+  padding: 16px 0;
+  margin-top: 35px;
+}
+.studio-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 35px;
+  margin-top: 24px;
+}
+aside {
+  border-right: 1px solid #c8ba9b;
+  padding-right: 24px;
+}
+aside h2 {
+  font-size: 23px;
+}
+#draft-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+#draft-list button {
+  text-align: left;
+  display: grid;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+#draft-list button small {
+  font-size: 11px;
+  color: #676757;
+}
+#draft-list button[aria-current='true'] {
+  border-color: #963a2c;
+  background: #eaddc4;
+}
+#workspace {
+  padding: 0;
+  border: 0;
+}
+.field {
+  margin-bottom: 18px;
+}
+.field label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid #b6a280;
+  background: #faf3e4;
+  padding: 12px;
+  border-radius: 0;
+}
+.field textarea {
+  resize: vertical;
+  line-height: 2.2;
+  font-size: 17px;
+  min-height: 300px;
+}
+.field input:disabled,
+.field textarea:disabled,
+.field select:disabled {
+  color: #646454;
+  background: #e8dfcd;
+}
+.writing-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: #676757;
+}
+.writing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+#save-draft,
+#confirm-send {
+  background: #963a2c;
+  color: #f1e9d6;
+  border-color: #963a2c;
+}
+#save-status,
+#studio-status {
+  color: #963a2c;
+  font-size: 14px;
+}
+.note,
+#list-status {
+  font-size: 12px;
+  color: #676757;
+}
+dialog {
+  background: #f1e9d6;
+  color: #2d3c30;
+  border: 5px double #b6a280;
+  width: min(520px, calc(100% - 30px));
+  max-height: 90dvh;
+  overflow: auto;
+  padding: 28px;
+}
+dialog::backdrop {
+  background: #1c3029aa;
+}
+dialog h2 {
+  font-family: STKaiti, 'Kaiti SC', serif;
+}
+dialog p {
+  font-size: 15px;
+}
+@media (max-width: 700px) {
+  .studio-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  aside {
+    border-right: 0;
+    border-bottom: 1px solid #c8ba9b;
+    padding: 0 0 20px;
+  }
+  #draft-list {
+    max-height: 230px;
+    overflow: auto;
+  }
+  .writing-actions button {
+    flex: 1;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .intro {
+    font-size: 14px;
+  }
+  .writing-meta {
+    flex-wrap: wrap;
+  }
+  .field textarea {
+    min-height: 360px;
+  }
+  header,
+  main,
+  footer {
+    padding-inline: 6%;
+  }
+}
