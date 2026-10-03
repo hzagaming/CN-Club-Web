@@ -12,8 +12,8 @@
     <link rel="icon" href="assets/seal.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="classical.css" />
-    <link rel="stylesheet" href="experience.css" />
     <link rel="stylesheet" href="motion.css?v=2" />
+    <link rel="stylesheet" href="experience.css?v=3" />
     <script type="module" src="js/main.js"></script>
     <script type="module" src="js/motion.js?v=2"></script>
   </head>
@@ -34,8 +34,8 @@
         目 录 <span>☰</span>
       </button>
       <nav id="navigation" aria-label="主导航">
-        <a href="#about">识 · 琢光</a><a href="#writings">阅 · 文苑</a
-        ><a href="#activities">赴 · 文会</a><a href="#join">共 · 执笔</a>
+        <a href="#writings">文苑</a><a href="#about">关于琢光</a><a href="#activities">雅集</a
+        ><a href="write.html">创作书斋</a>
       </nav>
       <button class="login-button" data-login>社员登录 <span>↗</span></button>
     </header>
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="hero-copy">
-          <p class="eyebrow"><span></span> 琢光中文文学社</p>
+          <p class="eyebrow"><span></span> 以文字相遇的地方</p>
           <h1 id="hero-title">
             以文琢玉，<br />向光而<span class="last-character">生<i class="tiny-seal">文心</i></span
             >。
@@ -64,7 +64,11 @@
           <p class="hero-description">
             在字里行间，照见山河与自己。<br />让每一个热爱文字的你，都有落笔之处。
           </p>
-          <a class="primary-link" href="#writings">翻开我们的文苑 <span>⟶</span></a>
+          <div class="hero-actions">
+            <a class="primary-link" href="#writings">入卷 · 读作品 <span>⟶</span></a
+            ><a class="secondary-link" href="write.html">执笔 · 写新篇 <span>↗</span></a>
+          </div>
+          <p class="hero-footnote">阅读无需登录 · 把一份热爱，慢慢写成光</p>
         </div>
         <img
           class="hero-bamboo"
@@ -189,9 +193,23 @@
           ><span>让文字，成为我们的相逢。</span>
         </div>
       </section>
-      <div class="scroll-divider" aria-hidden="true">
-        <span>展 卷</span><i></i><b>琢</b><i></i><span>见 光</span>
-      </div>
+      <nav class="journey-links" aria-label="探索琢光">
+        <a href="#writings"
+          ><span class="journey-mark" aria-hidden="true">阅</span
+          ><span><strong>在文苑，遇见共鸣</strong><small>散文、诗歌与少年笔下的故事</small></span
+          ><i aria-hidden="true">↗</i></a
+        >
+        <a href="write.html"
+          ><span class="journey-mark" aria-hidden="true">写</span
+          ><span><strong>在书斋，留下心光</strong><small>从第一句话，到属于你的作品</small></span
+          ><i aria-hidden="true">↗</i></a
+        >
+        <a href="#activities"
+          ><span class="journey-mark" aria-hidden="true">聚</span
+          ><span><strong>在雅集，相逢同好</strong><small>共读、共写，一起发现中文之美</small></span
+          ><i aria-hidden="true">↗</i></a
+        >
+      </nav>
       <section id="about" class="about section">
         <div class="section-side">
           <span class="binding" aria-hidden="true"></span
@@ -223,10 +241,10 @@
             <p class="section-number">卷贰 · 纸上春秋</p>
             <h2>琢光文苑<span>字字有来处，篇篇见少年。</span></h2>
           </div>
-          <span class="editorial-label">文苑预览 · 示范篇目</span>
+          <a class="section-action" href="write.html">我也想写一篇 <span>↗</span></a>
         </div>
         <div class="writing-search">
-          <label for="writing-search">寻一篇文字</label>
+          <label for="writing-search">寻文</label>
           <div class="search-field">
             <input
               id="writing-search"
@@ -259,7 +277,7 @@
           ><p>文苑筛选与全文阅读需要启用 JavaScript。你仍可浏览社团介绍和活动信息。</p></noscript
         >
         <p class="collection-note">藏书保存在当前浏览器，无需登录；清除浏览器数据后会移除。</p>
-        <p class="section-note">这里等待你的第一篇来稿。当前篇目为网站展示示例，非社员真实投稿。</p>
+        <p class="section-note">文苑试阅 · 以下为示范作品，期待正式收录你们的文字。</p>
       </section>
       <section class="quote-section">
         <img class="quote-clouds" src="assets/clouds.svg" alt="" aria-hidden="true" /><span
