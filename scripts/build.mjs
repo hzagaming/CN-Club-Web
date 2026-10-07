@@ -10,6 +10,7 @@ for (const name of [
   'join.html',
   'guide.html',
   'pages.css',
+  'transitions.css',
   'write.html',
   'write.css',
   'style.css',

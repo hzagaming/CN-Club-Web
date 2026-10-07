@@ -330,3 +330,35 @@ test('unknown filters and unavailable storage still allow catalogue switching', 
     d.window.close();
   }
 });
+
+test('library changes expose stable card identities with before/after layout events', () => {
+  const d = page();
+  try {
+    d.window.eval(source);
+    const doc = d.window.document,
+      sequence = [];
+    for (const name of ['before', 'after'])
+      doc.addEventListener(`zhuoguang:layout-${name}`, () => {
+        sequence.push([
+          name,
+          [...doc.querySelectorAll('[data-writing-id]')].map((node) => node.dataset.writingId),
+        ]);
+      });
+    doc.querySelector('[data-filter="诗歌"]').click();
+    assert.deepEqual(sequence, [
+      ['before', ['rain', 'moon', 'letter']],
+      ['after', ['moon']],
+    ]);
+    sequence.length = 0;
+    doc.querySelector('[data-library-view=list]').click();
+    assert.deepEqual(
+      sequence.map((entry) => entry[0]),
+      ['before', 'after'],
+    );
+    sequence.length = 0;
+    doc.querySelector('[data-library-view=list]').click();
+    assert.equal(sequence.length, 0);
+  } finally {
+    d.window.close();
+  }
+});

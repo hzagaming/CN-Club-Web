@@ -1,0 +1,71 @@
+/* Progressive cross-document motion. Navigation remains a normal link operation. */
+@view-transition {
+  navigation: auto;
+}
+html[data-motion='on'] .header {
+  view-transition-name: site-header;
+}
+html[data-motion='on'] body > main {
+  view-transition-name: page-content;
+}
+html[data-motion='on'] #motion-panel {
+  view-transition-name: motion-controls;
+}
+::view-transition-group(*) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+}
+::view-transition-old(page-content) {
+  animation: page-ink-out 180ms ease-out both;
+}
+::view-transition-new(page-content) {
+  animation: page-ink-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+::view-transition-old(site-header),
+::view-transition-new(site-header),
+::view-transition-old(motion-controls),
+::view-transition-new(motion-controls) {
+  animation-duration: 160ms;
+}
+@keyframes page-ink-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+@keyframes page-ink-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Keep the persistent navigation stable; mobile menu links retain their own opening motion. */
+html[data-motion='on'] .header .brand,
+html[data-motion='on'] .header nav a,
+html[data-motion='on'] .header .login-button {
+  animation: none;
+}
+html[data-motion='off']::view-transition-group(*),
+html[data-motion='off']::view-transition-old(*),
+html[data-motion='off']::view-transition-new(*) {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion-mode='full'])::view-transition-group(*),
+  html:not([data-motion-mode='full'])::view-transition-old(*),
+  html:not([data-motion-mode='full'])::view-transition-new(*) {
+    animation: none !important;
+  }
+}

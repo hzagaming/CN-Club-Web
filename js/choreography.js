@@ -27,6 +27,7 @@ function trackAnimation(target, frames, options) {
 }
 function cancelMotion() {
     clearPointerLight();
+    cancelLayoutMotion();
     clearTimeout(heroTimer);
     cancelAnimationFrame(redrawFrame);
     pageHero?.classList.remove('is-unfolding');
@@ -109,6 +110,8 @@ function enter(node) {
     if (!motionAllowed())
         return;
     playedElements.add(node);
+    if (node.dataset.layoutMoving === 'true' || pageRoot.dataset.pageTransition === 'active')
+        return;
     runningEntrances.add(node);
     node.classList.add('is-entering');
 }
@@ -182,6 +185,82 @@ if (writingGrid)
             }
         observeEntrances(writingGrid);
     }).observe(writingGrid, { childList: true });
+// Measure once before and once after a user-driven layout change. No frame polling.
+const layoutPositions = new Map();
+const layoutAnimations = new Map();
+function cancelLayoutMotion() {
+    for (const [node, animation] of layoutAnimations) {
+        animation.cancel();
+        delete node.dataset.layoutMoving;
+    }
+    layoutAnimations.clear();
+    layoutPositions.clear();
+}
+const inViewport = (rect) => rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight;
+document.addEventListener('zhuoguang:layout-before', () => {
+    layoutPositions.clear();
+    if (motionAllowed())
+        writingGrid?.querySelectorAll('[data-writing-id]').forEach((node) => {
+            const rect = node.getBoundingClientRect();
+            if (inViewport(rect))
+                layoutPositions.set(node.dataset.writingId, rect);
+        });
+    // Keep the captured in-flight position, then cancel the old interpolation.
+    for (const [node, animation] of layoutAnimations) {
+        animation.cancel();
+        delete node.dataset.layoutMoving;
+    }
+    layoutAnimations.clear();
+});
+document.addEventListener('zhuoguang:layout-after', () => {
+    if (!motionAllowed() || !writingGrid) {
+        layoutPositions.clear();
+        return;
+    }
+    const measurements = [...writingGrid.querySelectorAll('[data-writing-id]')].map((node) => ({ node, rect: node.getBoundingClientRect() }));
+    measurements.forEach(({ node, rect }, index) => {
+        if (!inViewport(rect) || !node.animate)
+            return;
+        const before = layoutPositions.get(node.dataset.writingId);
+        const dx = before ? before.left - rect.left : 0;
+        const dy = before ? before.top - rect.top : 20;
+        const scaleX = before ? Math.min(1.3, Math.max(0.75, before.width / rect.width)) : 0.98;
+        const scaleY = before ? Math.min(1.15, Math.max(0.85, before.height / rect.height)) : 0.98;
+        if (before &&
+            Math.abs(dx) + Math.abs(dy) < 1 &&
+            Math.abs(scaleX - 1) + Math.abs(scaleY - 1) < 0.01) {
+            playedElements.add(node);
+            return;
+        }
+        node.classList.remove('is-entering');
+        runningEntrances.delete(node);
+        node.dataset.layoutMoving = 'true';
+        playedElements.add(node);
+        const animation = node.animate([
+            {
+                transform: `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`,
+                transformOrigin: '0 0',
+                opacity: before ? 1 : 0.2,
+            },
+            { transform: 'translate(0, 0) scale(1, 1)', transformOrigin: '0 0', opacity: 1 },
+        ], {
+            duration: before ? 520 : 420,
+            delay: before ? 0 : Math.min(index, 3) * 45,
+            easing: 'cubic-bezier(.16,1,.3,1)',
+            fill: 'backwards',
+        });
+        layoutAnimations.set(node, animation);
+        const release = () => {
+            if (layoutAnimations.get(node) !== animation)
+                return;
+            delete node.dataset.layoutMoving;
+            layoutAnimations.delete(node);
+        };
+        animation.onfinish = animation.oncancel = release;
+    });
+    layoutPositions.clear();
+});
+addEventListener('resize', cancelLayoutMotion, { passive: true });
 document.addEventListener('zhuoguang:replay', () => {
     if (!motionAllowed())
         return;

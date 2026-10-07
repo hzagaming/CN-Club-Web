@@ -1140,3 +1140,45 @@ details.motion-dock {
 body {
   padding-bottom: 72px;
 }
+
+/* FLIP owns the card transform only during a deliberate layout change. */
+.writing-card[data-layout-moving='true'] {
+  transition: none !important;
+  will-change: transform;
+}
+.page-heading:after {
+  content: '';
+  display: block;
+  width: 38px;
+  height: 2px;
+  background: var(--red);
+  margin-top: 20px;
+  transform-origin: left;
+}
+html[data-motion='on'] .page-heading.is-entering:after {
+  animation: heading-rule 750ms var(--motion-ease) 100ms both;
+}
+@keyframes heading-rule {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+html[data-motion='on'] .motion-dock[open] .motion-panel-controls {
+  animation: panel-unfold 260ms var(--motion-ease) both;
+  transform-origin: 100% 100%;
+}
+@keyframes panel-unfold {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

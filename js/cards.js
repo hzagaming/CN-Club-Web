@@ -33,6 +33,7 @@ function updateTilt() {
 }
 const grid = element('#writing-grid');
 new MutationObserver(resetTilt).observe(grid, { childList: true });
+document.addEventListener('zhuoguang:layout-before', resetTilt);
 addEventListener('scroll', resetTilt, { passive: true });
 addEventListener('resize', resetTilt, { passive: true });
 addEventListener('blur', resetTilt);
@@ -40,7 +41,7 @@ grid.addEventListener('pointermove', (event) => {
     if (!enabled || !finePointer.matches || event.pointerType === 'touch')
         return;
     const card = event.target?.closest('.writing-card');
-    if (!card) {
+    if (!card || card.dataset.layoutMoving === 'true') {
         resetTilt();
         return;
     }

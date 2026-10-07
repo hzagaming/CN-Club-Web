@@ -121,14 +121,17 @@ function renderWritings() {
         .toLocaleLowerCase()
         .includes(query),
   );
+  document.dispatchEvent(new Event('zhuoguang:layout-before'));
   grid.replaceChildren();
   matches.forEach((item) => {
     const article = document.createElement('article');
     article.className = 'writing-card';
+    article.dataset.writingId = item.id;
     // All interpolated values below are local editorial constants.
     article.innerHTML = `<div class="card-art art-${item.art}" aria-hidden="true"><span>${item.cover}</span><i class="card-stamp">琢光<br>文藏</i><small class="card-colophon">一纸清欢 · 半卷流年</small></div><div class="card-copy"><span class="card-category">${item.label} · 示范作品</span><h3><button class="card-title" data-read="${item.id}">${item.title}</button></h3><p>${item.excerpt}</p><div class="card-bottom"><span>约一分钟 · 静心读完</span><button class="read-button" data-read="${item.id}" aria-label="阅读${item.title}">阅读全文 ↗</button></div></div>`;
     grid.append(article);
   });
+  document.dispatchEvent(new Event('zhuoguang:layout-after'));
   element('#saved-count').textContent = String(savedWritings.size);
   element('#writing-empty h3').textContent =
     currentFilter === 'saved' && !search.value.trim()
@@ -174,7 +177,10 @@ element('#reset-search').addEventListener('click', () => {
 restoreLibraryState();
 function setLibraryView(view: string): void {
   const selected = view === 'list' ? 'list' : 'cards';
+  if (grid.dataset.view === selected) return;
+  document.dispatchEvent(new Event('zhuoguang:layout-before'));
   grid.dataset.view = selected;
+  document.dispatchEvent(new Event('zhuoguang:layout-after'));
   document
     .querySelectorAll<HTMLButtonElement>('[data-library-view]')
     .forEach((button) =>

@@ -16,8 +16,11 @@
     const query = new URL(location.href).searchParams.get('motion');
     if (query === 'full' || query === 'auto' || query === 'off')
         mode = query;
+    const pageTransitions = new Set();
     function refresh() {
         const on = mode === 'full' || (mode === 'auto' && !system.matches);
+        if (!on)
+            pageTransitions.forEach((transition) => transition.skipTransition());
         html.dataset.motion = on ? 'on' : 'off';
         html.dataset.motionMode = mode;
         html.dataset.motionBoot = 'ready';
@@ -75,6 +78,27 @@
         toggle: () => setMode(window.zhuoguangMotion.enabled ? 'off' : 'full'),
         refresh,
     };
+    // These listeners live in the head's classic script, before the first paint.
+    const handlePageTransition = (event) => {
+        const transition = event.viewTransition;
+        if (!transition)
+            return;
+        if (!window.zhuoguangMotion.enabled) {
+            transition.skipTransition();
+            return;
+        }
+        pageTransitions.add(transition);
+        if (event.type === 'pagereveal')
+            html.dataset.pageTransition = 'active';
+        const finish = () => {
+            pageTransitions.delete(transition);
+            if (pageTransitions.size === 0)
+                delete html.dataset.pageTransition;
+        };
+        void transition.finished.then(finish, finish);
+    };
+    addEventListener('pageswap', handlePageTransition);
+    addEventListener('pagereveal', handlePageTransition);
     refresh();
     system.addEventListener('change', refresh);
     function replayVisible() {

@@ -339,3 +339,130 @@ test('reader turns follow navigation direction, replace pending turns and stop o
     c.dom.window.close();
   }
 });
+
+test('library reflow animates shared card positions and cancels interrupted movement', async () => {
+  const c = await setup(false, false, 'writings.html');
+  try {
+    const grid = c.doc.querySelector('#writing-grid');
+    grid.innerHTML =
+      '<article class="writing-card" data-writing-id="rain">雨</article><article class="writing-card" data-writing-id="moon">月</article>';
+    await flush();
+    let layout = 'cards',
+      measurements = 0;
+    const [rain, moon] = grid.children;
+    [rain, moon].forEach(
+      (node, index) =>
+        (node.getBoundingClientRect = () => {
+          measurements++;
+          const top = layout === 'cards' ? 100 : 100 + index * 240;
+          const left = layout === 'cards' ? index * 340 : 0;
+          return {
+            top,
+            left,
+            width: layout === 'cards' ? 300 : 650,
+            height: 180,
+            bottom: top + 180,
+          };
+        }),
+    );
+    const change = () => c.doc.dispatchEvent(new c.w.Event('zhuoguang:layout-before'));
+    const changed = () => c.doc.dispatchEvent(new c.w.Event('zhuoguang:layout-after'));
+    change();
+    layout = 'list';
+    changed();
+    const first = c.animations.findLast((a) => a.target === moon);
+    assert.match(first.keyframes[0].transform, /translate\(340px, -240px\)/);
+    assert.equal(moon.dataset.layoutMoving, 'true');
+    c.visible(moon);
+    assert.equal(moon.classList.contains('is-entering'), false);
+    change();
+    layout = 'cards';
+    changed();
+    assert.equal(first.cancelled, true);
+    const second = c.animations.findLast((a) => a.target === moon);
+    assert.notEqual(first, second);
+    assert.match(second.keyframes[0].transform, /translate\(-340px, 240px\)/);
+    c.w.zhuoguangMotion.setMode('off');
+    assert.equal(second.cancelled, true);
+    assert.equal(moon.dataset.layoutMoving, undefined);
+    const before = measurements;
+    change();
+    layout = 'list';
+    changed();
+    assert.equal(measurements, before);
+    assert.equal(grid.textContent, '雨月');
+  } finally {
+    c.dom.window.close();
+  }
+});
+
+test('reflow cleanup releases cards on completion and resize, leaving offscreen cards alone', async () => {
+  const c = await setup(false, false, 'writings.html');
+  try {
+    const grid = c.doc.querySelector('#writing-grid');
+    grid.innerHTML =
+      '<article class="writing-card" data-writing-id="rain">雨</article><article class="writing-card" data-writing-id="moon">月</article>';
+    await flush();
+    const [rain, moon] = grid.children;
+    let left = 0;
+    rain.getBoundingClientRect = () => ({ top: 100, bottom: 300, left, width: 300, height: 200 });
+    moon.getBoundingClientRect = () => ({ top: 5000, bottom: 5200, left, width: 300, height: 200 });
+    const move = () => {
+      c.doc.dispatchEvent(new c.w.Event('zhuoguang:layout-before'));
+      left += 100;
+      c.doc.dispatchEvent(new c.w.Event('zhuoguang:layout-after'));
+    };
+    move();
+    assert.equal(
+      c.animations.some((a) => a.target === moon),
+      false,
+    );
+    c.animations.findLast((a) => a.target === rain).onfinish();
+    assert.equal(rain.dataset.layoutMoving, undefined);
+    move();
+    const pending = c.animations.findLast((a) => a.target === rain);
+    c.w.dispatchEvent(new c.w.Event('resize'));
+    assert.equal(pending.cancelled, true);
+    assert.equal(rain.dataset.layoutMoving, undefined);
+  } finally {
+    c.dom.window.close();
+  }
+});
+
+test('cross-document transitions skip reduced motion and cancel immediately when paused', async () => {
+  const dom = await bootOnly('http://localhost/');
+  try {
+    const w = dom.window,
+      root = w.document.documentElement;
+    let finish,
+      skipped = 0;
+    const transition = {
+      skipTransition() {
+        skipped++;
+      },
+      finished: new Promise((resolve) => {
+        finish = resolve;
+      }),
+    };
+    const reveal = () => {
+      const event = new w.Event('pagereveal');
+      Object.defineProperty(event, 'viewTransition', { value: transition });
+      w.dispatchEvent(event);
+    };
+    reveal();
+    assert.equal(skipped, 1);
+    assert.equal(root.dataset.pageTransition, undefined);
+    w.zhuoguangMotion.setMode('full');
+    reveal();
+    assert.equal(root.dataset.pageTransition, 'active');
+    w.zhuoguangMotion.setMode('off');
+    assert.equal(skipped, 2);
+    finish();
+    await flush();
+    assert.equal(root.dataset.pageTransition, undefined);
+    w.dispatchEvent(new w.Event('pagereveal'));
+    assert.equal(root.dataset.pageTransition, undefined);
+  } finally {
+    dom.window.close();
+  }
+});
