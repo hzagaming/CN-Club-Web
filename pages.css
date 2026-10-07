@@ -369,3 +369,117 @@ html[data-motion='on'] .home-directory a:hover > span:last-child {
     justify-content: space-between;
   }
 }
+
+/* The library can be browsed as covers or as a compact reading catalogue. */
+.library-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+.library-toolbar .results-count {
+  margin: 0;
+}
+.library-view-switch {
+  display: flex;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  padding: 3px;
+  gap: 3px;
+  border-radius: 4px;
+}
+.library-view-switch button {
+  min-height: 40px;
+  padding: 8px 16px;
+  color: var(--muted);
+  font-size: 12px;
+  transition:
+    background 200ms,
+    color 200ms;
+}
+.library-view-switch button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 2px;
+}
+.interior-page .writing-grid[data-view='list'] {
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.writing-grid[data-view='list'] .writing-card {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 0;
+}
+.writing-grid[data-view='list'] .card-art {
+  height: auto;
+  min-height: 200px;
+  margin: 0;
+  border-bottom: 0;
+}
+.writing-grid[data-view='list'] .card-art > span {
+  font-size: 26px;
+  letter-spacing: 7px;
+  padding: 10px;
+}
+.writing-grid[data-view='list'] .card-copy {
+  padding: 24px 30px;
+}
+.writing-grid[data-view='list'] .card-copy > p {
+  max-width: 650px;
+  margin-bottom: 16px;
+}
+.writing-grid[data-view='list'] .card-colophon {
+  display: none;
+}
+.writing-grid[data-view='list'] .card-stamp {
+  font-size: 10px;
+  bottom: 18px;
+  right: 18px;
+}
+.writing-grid[data-view='list'] .card-bottom {
+  justify-content: space-between;
+}
+.page-content {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  .library-toolbar {
+    flex-wrap: wrap;
+  }
+  .library-view-switch {
+    margin-left: auto;
+  }
+  .writing-grid[data-view='list'] .writing-card {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+  .writing-grid[data-view='list'] .card-art {
+    min-height: 180px;
+  }
+  .writing-grid[data-view='list'] .card-art > span {
+    font-size: 19px;
+    letter-spacing: 4px;
+    padding: 6px;
+  }
+  .writing-grid[data-view='list'] .card-stamp {
+    display: none;
+  }
+  .writing-grid[data-view='list'] .card-copy {
+    padding: 18px 16px;
+  }
+  .writing-grid[data-view='list'] .card-copy h3 {
+    font-size: 20px;
+  }
+  .writing-grid[data-view='list'] .card-bottom {
+    flex-wrap: wrap;
+  }
+  .reader-dialog {
+    max-height: calc(100dvh - 24px);
+    padding-inline: 22px;
+  }
+  .reader-dialog .reader-library select {
+    min-width: 0;
+    max-width: 100%;
+  }
+}

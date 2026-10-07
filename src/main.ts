@@ -61,9 +61,54 @@ const grid = element('#writing-grid');
 const search = element<HTMLInputElement>('#writing-search');
 let currentFilter = 'all';
 let currentWriting = 0;
+const filterKeys: Record<string, string> = {
+  all: 'all',
+  essay: '散文',
+  poetry: '诗歌',
+  story: '故事',
+  saved: 'saved',
+};
+let composing = false;
+let committedQuery = '';
+function updateLibraryAddress(push = false): void {
+  const url = new URL(location.href);
+  const category =
+    Object.keys(filterKeys).find((key) => filterKeys[key] === currentFilter) || 'all';
+  if (category === 'all') url.searchParams.delete('category');
+  else url.searchParams.set('category', category);
+  const query = search.value.trim();
+  if (query) url.searchParams.set('q', query);
+  else url.searchParams.delete('q');
+  if (url.href !== location.href) {
+    if (push) history.pushState(null, '', url);
+    else history.replaceState(history.state, '', url);
+  }
+}
+function restoreLibraryState(): void {
+  const params = new URL(location.href).searchParams;
+  search.value = (params.get('q') || '').slice(0, 100);
+  committedQuery = search.value;
+  const key = params.get('category') || 'all';
+  currentFilter = Object.hasOwn(filterKeys, key) ? filterKeys[key] : 'all';
+  refreshFilterButtons();
+  renderWritings();
+}
+function refreshFilterButtons(): void {
+  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
+    const active = button.dataset.filter === currentFilter;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+function commitSearch(): void {
+  if (composing || search.value === committedQuery) return;
+  committedQuery = search.value;
+  updateLibraryAddress();
+  renderWritings();
+}
 
 function renderWritings() {
-  const query = search.value.trim().toLocaleLowerCase();
+  const query = search.value.trim().normalize('NFKC').toLocaleLowerCase();
   const matches = writings.filter(
     (item) =>
       (currentFilter === 'all' ||
@@ -72,6 +117,7 @@ function renderWritings() {
           : item.category === currentFilter)) &&
       [item.title, item.label, item.excerpt, ...item.body]
         .join(' ')
+        .normalize('NFKC')
         .toLocaleLowerCase()
         .includes(query),
   );
@@ -95,11 +141,9 @@ function renderWritings() {
 }
 function setFilter(filter: string) {
   currentFilter = filter;
-  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((button) => {
-    const active = button.dataset.filter === filter;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-pressed', String(active));
-  });
+  refreshFilterButtons();
+  committedQuery = search.value;
+  updateLibraryAddress(true);
   renderWritings();
 }
 document
@@ -107,10 +151,19 @@ document
   .forEach((button) =>
     button.addEventListener('click', () => setFilter(button.dataset.filter ?? 'all')),
   );
-search.addEventListener('input', renderWritings);
+search.addEventListener('compositionstart', () => {
+  composing = true;
+});
+search.addEventListener('compositionend', () => {
+  composing = false;
+  commitSearch();
+});
+search.addEventListener('input', (event) => {
+  if (!(event as InputEvent).isComposing) commitSearch();
+});
 element('#clear-search').addEventListener('click', () => {
   search.value = '';
-  renderWritings();
+  commitSearch();
   search.focus();
 });
 element('#reset-search').addEventListener('click', () => {
@@ -118,12 +171,38 @@ element('#reset-search').addEventListener('click', () => {
   setFilter('all');
   search.focus();
 });
-renderWritings();
+restoreLibraryState();
+function setLibraryView(view: string): void {
+  const selected = view === 'list' ? 'list' : 'cards';
+  grid.dataset.view = selected;
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-library-view]')
+    .forEach((button) =>
+      button.setAttribute('aria-pressed', String(button.dataset.libraryView === selected)),
+    );
+}
+try {
+  setLibraryView(localStorage.getItem('zhuoguang-library-view') || 'cards');
+} catch {
+  setLibraryView('cards');
+}
+document.querySelectorAll<HTMLButtonElement>('[data-library-view]').forEach((button) =>
+  button.addEventListener('click', () => {
+    setLibraryView(button.dataset.libraryView || 'cards');
+    try {
+      localStorage.setItem('zhuoguang-library-view', grid.dataset.view!);
+    } catch {
+      /* Session only. */
+    }
+  }),
+);
 
 const reader = element<HTMLDialogElement>('#reader-dialog');
-reader.addEventListener('close', clearArticleLink);
+reader.addEventListener('close', () => {
+  if (!reader.open) clearArticleLink();
+});
 const readerBody = element('#reader-body');
-function showWriting(index: number) {
+function showWriting(index: number, address: 'push' | 'replace' | false = 'replace') {
   if (!writings[index]) return;
   readerBody.dataset.turn = !reader.open ? 'open' : index < currentWriting ? 'previous' : 'next';
   currentWriting = index;
@@ -141,6 +220,14 @@ function showWriting(index: number) {
   element<HTMLButtonElement>('#previous-writing').disabled = index === 0;
   element<HTMLButtonElement>('#next-writing').disabled = index === writings.length - 1;
   updateLibraryControls();
+  if (address) {
+    const url = new URL(location.href);
+    url.searchParams.set('article', item.id);
+    if (url.href !== location.href) {
+      if (address === 'push') history.pushState(null, '', url);
+      else history.replaceState(history.state, '', url);
+    }
+  }
   reader.scrollTop = 0;
   readerBody.scrollTop = 0;
   readerBody.scrollLeft = 0;
@@ -148,7 +235,10 @@ function showWriting(index: number) {
 grid.addEventListener('click', (event) => {
   const button = (event.target as Element | null)?.closest<HTMLElement>('[data-read]');
   if (!button) return;
-  showWriting(writings.findIndex((item) => item.id === button.dataset.read));
+  showWriting(
+    writings.findIndex((item) => item.id === button.dataset.read),
+    'push',
+  );
   openDialog('reader-dialog');
 });
 for (const [selector, offset] of [
@@ -207,9 +297,6 @@ function updateLibraryControls() {
   element<HTMLSelectElement>('#reader-contents').value = item.id;
   element('#library-feedback').textContent = '';
   element('#share-fallback').hidden = true;
-  const url = new URL(location.href);
-  url.searchParams.set('article', item.id);
-  history.replaceState(null, '', url);
 }
 function clearArticleLink() {
   const url = new URL(location.href);
@@ -249,7 +336,7 @@ element('#save-writing').addEventListener('click', () => {
 });
 element<HTMLButtonElement>('#share-writing').addEventListener('click', async () => {
   const articleId = writings[currentWriting].id;
-  const url = new URL(location.href);
+  const url = new URL('writings.html', location.href);
   url.searchParams.set('article', articleId);
   const shareButton = element<HTMLButtonElement>('#share-writing');
   shareButton.disabled = true;
@@ -280,10 +367,14 @@ function openLinkedWriting() {
   const index = writings.findIndex((item) => item.id === id);
   if (index === -1) {
     clearArticleLink();
+    if (reader.open) reader.close();
     return;
   }
-  showWriting(index);
+  showWriting(index, false);
   if (!reader.open) openDialog('reader-dialog');
 }
-addEventListener('popstate', openLinkedWriting);
+addEventListener('popstate', () => {
+  restoreLibraryState();
+  openLinkedWriting();
+});
 openLinkedWriting();

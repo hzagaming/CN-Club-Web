@@ -211,3 +211,122 @@ test('public output excludes server, SQL, database and credentials; backup is sc
   }
   dom.window.close();
 });
+
+test(
+  'library filters survive reload and browser back closes reading before leaving the list',
+  { timeout: 3000 },
+  async () => {
+    const d = page('http://localhost/writings.html?category=poetry&q=月');
+    try {
+      const w = d.window,
+        doc = w.document;
+      w.eval(source);
+      assert.equal(doc.querySelector('#writing-search').value, '月');
+      assert.equal(doc.querySelector('[data-filter="诗歌"]').getAttribute('aria-pressed'), 'true');
+      assert.equal(doc.querySelectorAll('.writing-card').length, 1);
+      const button = doc.querySelector('[data-read=moon]');
+      button.focus();
+      button.click();
+      assert.equal(doc.querySelector('#reader-dialog').open, true);
+      const back = new Promise((resolve) =>
+        w.addEventListener('popstate', resolve, { once: true }),
+      );
+      w.history.back();
+      await back;
+      assert.equal(doc.querySelector('#reader-dialog').open, false);
+      assert.equal(doc.querySelector('#writing-search').value, '月');
+      assert.equal(doc.querySelectorAll('.writing-card').length, 1);
+      assert.equal(doc.activeElement.dataset.read, 'moon');
+      const forward = new Promise((resolve) =>
+        w.addEventListener('popstate', resolve, { once: true }),
+      );
+      w.history.forward();
+      await forward;
+      assert.equal(doc.querySelector('#reader-dialog').open, true);
+      assert.match(doc.querySelector('#reader-title').textContent, /月光/);
+    } finally {
+      d.window.close();
+    }
+  },
+);
+test('Chinese composition commits once and library view survives storage when available', () => {
+  const d = page();
+  try {
+    const w = d.window,
+      doc = w.document;
+    w.localStorage.setItem('zhuoguang-library-view', 'list');
+    w.eval(source);
+    assert.equal(doc.querySelector('#writing-grid').dataset.view, 'list');
+    const input = doc.querySelector('#writing-search');
+    input.dispatchEvent(new w.CompositionEvent('compositionstart'));
+    input.value = 'yue';
+    input.dispatchEvent(new w.InputEvent('input', { isComposing: true }));
+    assert.equal(doc.querySelectorAll('.writing-card').length, 3);
+    assert.equal(new URL(w.location.href).searchParams.has('q'), false);
+    input.value = '月';
+    input.dispatchEvent(new w.CompositionEvent('compositionend'));
+    assert.equal(doc.querySelectorAll('.writing-card').length, 1);
+    const card = doc.querySelector('.writing-card');
+    input.dispatchEvent(new w.InputEvent('input'));
+    assert.equal(doc.querySelector('.writing-card'), card);
+    assert.equal(new URL(w.location.href).searchParams.get('q'), '月');
+    doc.querySelector('[data-library-view=cards]').click();
+    assert.equal(w.localStorage.getItem('zhuoguang-library-view'), 'cards');
+    assert.equal(doc.querySelector('.writing-card'), card);
+  } finally {
+    d.window.close();
+  }
+});
+test('saving restores focus to the replacement card and shared links contain only the article', async () => {
+  const d = page('http://localhost/writings.html?q=月&category=poetry&motion=full');
+  try {
+    const w = d.window,
+      doc = w.document;
+    w.eval(source);
+    const opener = doc.querySelector('[data-read=moon]');
+    opener.focus();
+    opener.click();
+    doc.querySelector('#save-writing').click();
+    assert.equal(opener.isConnected, false);
+    doc.querySelector('#share-writing').click();
+    await flush();
+    assert.equal(
+      doc.querySelector('#share-url').value,
+      'http://localhost/writings.html?article=moon',
+    );
+    doc.querySelector('#reader-dialog').close();
+    assert.equal(doc.activeElement.dataset.read, 'moon');
+    assert.equal(new URL(w.location.href).searchParams.get('q'), '月');
+    doc.querySelector('[data-filter=saved]').click();
+    const savedCard = doc.querySelector('[data-read=moon]');
+    savedCard.focus();
+    savedCard.click();
+    doc.querySelector('#save-writing').click();
+    assert.equal(doc.querySelectorAll('.writing-card').length, 0);
+    doc.querySelector('#reader-dialog').close();
+    assert.equal(doc.activeElement.id, 'writing-search');
+  } finally {
+    d.window.close();
+  }
+});
+test('unknown filters and unavailable storage still allow catalogue switching', () => {
+  const d = page('http://localhost/writings.html?category=constructor');
+  try {
+    Object.defineProperty(d.window, 'localStorage', {
+      get() {
+        throw new Error('blocked');
+      },
+    });
+    d.window.eval(source);
+    const doc = d.window.document;
+    assert.equal(doc.querySelectorAll('.writing-card').length, 3);
+    doc.querySelector('[data-library-view=list]').click();
+    assert.equal(doc.querySelector('#writing-grid').dataset.view, 'list');
+    assert.equal(
+      doc.querySelector('[data-library-view=list]').getAttribute('aria-pressed'),
+      'true',
+    );
+  } finally {
+    d.window.close();
+  }
+});

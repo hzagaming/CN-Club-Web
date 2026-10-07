@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="lite.css" />
     <link rel="stylesheet" href="write.css?v=6" />
     <script type="module" src="js/write.js"></script>
-    <link rel="stylesheet" href="choreography.css?v=5" />
+    <link rel="stylesheet" href="choreography.css?v=7" />
     <script type="module" src="js/choreography.js?v=6"></script>
   </head>
   <body data-page="write">
@@ -105,24 +105,28 @@
       </div>
     </dialog>
     <footer>琢光中文文学社 · 我的书斋</footer>
-    <div id="motion-panel" class="motion-dock" role="group" aria-label="全站动效设置" hidden="">
-      <div class="motion-panel-info">
-        <span class="motion-sample" aria-hidden="true"><i></i><i></i><i></i></span
-        ><strong id="motion-status" role="status">正在检查动效</strong
-        ><small id="motion-startup-hint">正在启动</small>
+    <details id="motion-panel" class="motion-dock" aria-label="全站动效设置" hidden>
+      <summary class="motion-panel-summary">
+        <span class="motion-sample" aria-hidden="true"><i></i><i></i><i></i></span>
+        <strong id="motion-status" role="status">正在检查动效</strong>
+        <span class="motion-panel-chevron" aria-hidden="true">⌃</span>
+      </summary>
+      <div class="motion-panel-controls">
+        <p id="motion-startup-hint">正在启动</p>
+        <div class="motion-panel-actions">
+          <button type="button" data-motion-preset="auto" aria-pressed="true">跟随系统</button>
+          <button type="button" data-motion-preset="full" aria-pressed="false">完整动效</button>
+          <button
+            type="button"
+            class="motion-dock-state"
+            data-motion-command="toggle"
+            aria-pressed="false"
+          >
+            暂停动效
+          </button>
+          <button type="button" data-motion-command="replay">重播此屏 ↻</button>
+        </div>
       </div>
-      <div class="motion-panel-actions">
-        <button type="button" data-motion-preset="auto" aria-pressed="true">跟随系统</button
-        ><button type="button" data-motion-preset="full" aria-pressed="false">完整动效</button
-        ><button
-          type="button"
-          class="motion-dock-state"
-          data-motion-command="toggle"
-          aria-pressed="false"
-        >
-          暂停动效</button
-        ><button type="button" data-motion-command="replay">重播此屏 ↻</button>
-      </div>
-    </div>
+    </details>
   </body>
 </html>

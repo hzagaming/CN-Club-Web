@@ -1076,3 +1076,67 @@ html[data-motion='on'] .empty-state:not([hidden]) {
     animation-delay: 210ms;
   }
 }
+
+/* Closed by default so the controls leave room for the page. Native details works without modules. */
+details.motion-dock {
+  padding: 0;
+  max-width: min(360px, calc(100vw - 24px));
+  bottom: max(12px, env(safe-area-inset-bottom));
+}
+.motion-panel-summary {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 14px;
+  min-height: 46px;
+  padding: 10px 14px 10px 36px;
+  cursor: pointer;
+  list-style: none;
+}
+.motion-panel-summary::-webkit-details-marker {
+  display: none;
+}
+.motion-panel-summary:focus-visible {
+  outline: 2px solid #963e30;
+  outline-offset: 3px;
+}
+.motion-panel-summary .motion-sample {
+  left: 12px;
+  top: 13px;
+}
+.motion-panel-summary strong {
+  font: 500 11px/1.6 var(--serif, 'Songti SC', serif);
+  max-width: 230px;
+  color: #485b45;
+}
+.motion-panel-chevron {
+  font-size: 15px;
+  line-height: 1;
+  transition: transform 250ms;
+}
+.motion-dock[open] .motion-panel-chevron {
+  transform: rotate(180deg);
+}
+.motion-panel-controls {
+  border-top: 1px solid #c7c9b4;
+  padding: 10px;
+}
+#motion-startup-hint {
+  margin: 0 4px 10px;
+  max-width: 300px;
+  font: 11px/1.7 var(--serif, 'Songti SC', serif);
+  color: #737760;
+}
+.motion-panel-controls .motion-panel-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.motion-panel-controls .motion-panel-actions button {
+  min-height: 44px;
+  border: 1px solid #c7c9b455;
+  font-size: 11px;
+}
+body {
+  padding-bottom: 72px;
+}

@@ -1,10 +1,12 @@
 import { element } from './dom.js';
 import { initializeAuth } from './auth.js';
-let lastFocused = null;
+const dialogReturnFocus = new WeakMap();
 export function openDialog(id) {
     closeMenu();
-    lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    element(`#${id}`).showModal();
+    const node = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const dialog = element(`#${id}`);
+    dialogReturnFocus.set(dialog, { node, readingId: node?.dataset.read });
+    dialog.showModal();
     document.body.classList.add('modal-open');
 }
 document.querySelectorAll('dialog').forEach((dialog) => {
@@ -29,11 +31,22 @@ document.querySelectorAll('dialog').forEach((dialog) => {
         pointerStartedOutside = false;
     });
     dialog.addEventListener('close', () => {
-        document.body.classList.remove('modal-open');
-        if (lastFocused?.isConnected)
-            lastFocused.focus({ preventScroll: true });
-        else
-            document.querySelector('[data-login]')?.focus({ preventScroll: true });
+        if (dialog.open)
+            return;
+        const anotherDialog = document.querySelector('dialog[open]');
+        document.body.classList.toggle('modal-open', Boolean(anotherDialog));
+        if (anotherDialog)
+            return;
+        const origin = dialogReturnFocus.get(dialog);
+        const replacement = origin?.readingId
+            ? [...document.querySelectorAll('[data-read]')].find((node) => node.dataset.read === origin.readingId)
+            : null;
+        const target = origin?.node?.isConnected
+            ? origin.node
+            : replacement ||
+                document.querySelector('#writing-search') ||
+                document.querySelector('[data-login]');
+        target?.focus({ preventScroll: true });
     });
 });
 document
