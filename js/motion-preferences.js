@@ -83,6 +83,8 @@
         const transition = event.viewTransition;
         if (!transition)
             return;
+        // Skipping a native transition rejects ready, including normal pageswap teardown.
+        void transition.ready?.catch(() => { });
         if (!window.zhuoguangMotion.enabled) {
             transition.skipTransition();
             return;

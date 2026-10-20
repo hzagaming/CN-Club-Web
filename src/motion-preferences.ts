@@ -22,7 +22,11 @@ interface Window {
   }
   const query = new URL(location.href).searchParams.get('motion');
   if (query === 'full' || query === 'auto' || query === 'off') mode = query;
-  type PageTransition = { skipTransition(): void; finished: Promise<void> };
+  type PageTransition = {
+    skipTransition(): void;
+    ready?: Promise<void>;
+    finished: Promise<void>;
+  };
   const pageTransitions = new Set<PageTransition>();
   function refresh(): void {
     const on = mode === 'full' || (mode === 'auto' && !system.matches);
@@ -89,6 +93,8 @@ interface Window {
   const handlePageTransition = (event: Event) => {
     const transition = (event as Event & { viewTransition?: PageTransition }).viewTransition;
     if (!transition) return;
+    // Skipping a native transition rejects ready, including normal pageswap teardown.
+    void transition.ready?.catch(() => {});
     if (!window.zhuoguangMotion.enabled) {
       transition.skipTransition();
       return;

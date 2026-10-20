@@ -435,11 +435,16 @@ test('cross-document transitions skip reduced motion and cancel immediately when
     const w = dom.window,
       root = w.document.documentElement;
     let finish,
+      rejectReady,
       skipped = 0;
     const transition = {
       skipTransition() {
         skipped++;
+        rejectReady(new Error('Transition was skipped'));
       },
+      ready: new Promise((_, reject) => {
+        rejectReady = reject;
+      }),
       finished: new Promise((resolve) => {
         finish = resolve;
       }),
