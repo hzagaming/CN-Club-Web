@@ -116,11 +116,21 @@ GitHub Actions 配置同样执行类型、前端及 PHP 测试。CI 配置已添
 
 ## 部署
 
+### GitHub Pages
+
+仓库已配置 `.github/workflows/deploy-pages.yml`：推送到 `main` 或手动运行工作流时，先检查格式、类型并执行前端测试，再发布构建生成的 `public/`。
+
+首次使用时，在仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**，然后在 Actions 中运行 **Deploy website to GitHub Pages**。发布成功后默认地址为 **https://hzagaming.github.io/CN-Club-Web/**，实际地址以部署任务输出为准。私有仓库需要支持私有仓库 Pages 的 GitHub 套餐；不要为了部署而无意公开整个源码仓库。
+
+GitHub Pages 仅托管静态文件，不执行 PHP，也不提供 SQLite 服务。因此文苑、阅读、搜索、本机收藏与动画可以使用，账号登录和稿件保存、提交需要另外部署 PHP 后端。
+
+### 其他托管环境
+
 纯静态部署：构建后仅上传 `public/`。不运行 PHP 时，账号入口显示服务未连接，其余功能可用。
 
 完整部署：保留仓库目录结构，**只将 `public/` 设为网站根目录**，用 PHP-FPM 处理 `/api/`，参见 `deployment/nginx.conf.example`。通过服务配置设置 `APP_ENV=production`、数据库路径及 HTTPS。PHP 运行用户需有数据库目录读写权限，数据库与备份均保留在公开目录之外。
 
-内置 `php -S` 和 Node 预览服务器仅用于开发。本站不包含默认密码、外部服务凭据或自动发布步骤。
+内置 `php -S` 和 Node 预览服务器仅用于开发。本站不包含默认密码或外部服务凭据。
 
 ## 创作书斋
 
