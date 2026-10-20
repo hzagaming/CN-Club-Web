@@ -1,0 +1,16 @@
+# Keep branch-based Pages publishing consistent with the frontend-only Actions build.
+exclude:
+  - server
+  - database
+  - var
+  - src
+  - tests
+  - scripts
+  - deployment
+  - node_modules
+  - public
+  - README.md
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  - .env.example

@@ -117,10 +117,20 @@ html[data-motion='on'] .hero.is-unfolding .tiny-seal {
   animation: seal-landing 900ms var(--motion-ease) 1300ms both;
 }
 html[data-motion='on'] .hero.is-unfolding .hero-description {
-  animation: paper-rise 1100ms var(--motion-ease) 650ms both;
+  animation: hero-copy-arrive 650ms var(--motion-ease) 120ms both;
 }
 html[data-motion='on'] .hero.is-unfolding .hero-actions {
-  animation: paper-rise 1000ms var(--motion-ease) 850ms both;
+  animation: hero-copy-arrive 550ms var(--motion-ease) 180ms both;
+}
+@keyframes hero-copy-arrive {
+  from {
+    opacity: 0.7;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 html[data-motion='on'] .hero.is-unfolding .ink-brush-trail {
   animation: ink-light-pass 3s ease-in-out both;

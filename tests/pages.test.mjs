@@ -140,9 +140,103 @@ test('every public content page independently opens navigation and login, preser
           assert.equal(result.href, `http://localhost/${after}`);
         }
         assert.equal(w.legacyDestination(new w.URL('http://localhost/index.html#main')), null);
+        for (const [before, after] of [
+          ['CN-Club-Web/#about', 'CN-Club-Web/about.html'],
+          [
+            'CN-Club-Web/?article=moon&motion=full',
+            'CN-Club-Web/writings.html?article=moon&motion=full',
+          ],
+          ['CN-Club-Web/index.html#join', 'CN-Club-Web/join.html'],
+        ]) {
+          assert.equal(
+            w.legacyDestination(new w.URL(before, 'http://localhost/')).href,
+            `http://localhost/${after}`,
+          );
+        }
+        assert.equal(
+          w.legacyDestination(new w.URL('http://localhost/CN-Club-Web/about.html#about')),
+          null,
+        );
       }
     } finally {
       d.window.close();
     }
+  }
+});
+
+test('page progress tracks scrolling and layout changes; return to top respects motion and restores focus', async () => {
+  const d = new JSDOM(await readFile('public/about.html', 'utf8'), {
+    url: 'http://localhost/CN-Club-Web/about.html',
+    runScripts: 'outside-only',
+    pretendToBeVisual: true,
+  });
+  try {
+    const w = d.window;
+    const doc = w.document;
+    w.matchMedia = () => ({ matches: false, addEventListener() {} });
+    w.fetch = async () => ({ ok: false, json: async () => ({}) });
+    w.AbortSignal.timeout = () => new w.AbortController().signal;
+    let resize;
+    w.ResizeObserver = class {
+      constructor(callback) {
+        resize = callback;
+      }
+      observe() {}
+    };
+    let frame;
+    let scheduled = 0;
+    w.requestAnimationFrame = (callback) => {
+      scheduled++;
+      frame = callback;
+      return scheduled;
+    };
+    w.cancelAnimationFrame = () => {
+      frame = null;
+    };
+    const render = () => {
+      const callback = frame;
+      frame = null;
+      callback?.();
+    };
+    Object.defineProperty(doc.documentElement, 'scrollHeight', { value: 2400, configurable: true });
+    w.innerHeight = 800;
+    w.scrollY = 0;
+    w.eval([sources.dom, sources.auth, sources.site].join('\n'));
+    render();
+    const button = doc.querySelector('.return-top');
+    const marker = doc.querySelector('.page-progress');
+    assert.equal(button.hidden, true);
+    assert.equal(marker.style.transform, 'scaleX(0)');
+    w.scrollY = 800;
+    const before = scheduled;
+    w.dispatchEvent(new w.Event('scroll'));
+    w.dispatchEvent(new w.Event('scroll'));
+    assert.equal(scheduled, before + 1, 'scroll updates share one frame');
+    render();
+    assert.equal(button.hidden, false);
+    assert.equal(marker.style.transform, 'scaleX(0.5)');
+    let request;
+    w.scrollTo = (options) => {
+      request = options;
+    };
+    for (const [mode, behavior] of [
+      ['off', 'instant'],
+      ['on', 'smooth'],
+    ]) {
+      doc.documentElement.dataset.motion = mode;
+      button.focus();
+      button.click();
+      assert.equal(request.behavior, behavior);
+      assert.equal(request.top, 0);
+      assert.equal(doc.activeElement, doc.querySelector('h1'));
+    }
+    Object.defineProperty(doc.documentElement, 'scrollHeight', { value: 800 });
+    resize();
+    render();
+    assert.equal(marker.style.transform, 'scaleX(0)');
+    assert.equal(button.hidden, true, 'short pages need no return control');
+    await flush();
+  } finally {
+    d.window.close();
   }
 });

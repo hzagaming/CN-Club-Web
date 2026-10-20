@@ -217,12 +217,31 @@ html {
   border-top: 1px solid var(--line);
 }
 .home-directory > a {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 24px;
   padding: 20px 12px;
   border-bottom: 1px solid var(--line);
   transition: background 250ms;
+}
+.home-directory > a::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(100deg, #b1986024, #b1986000 85%);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.home-directory > a:hover::before,
+.home-directory > a:focus-visible::before {
+  transform: scaleX(1);
+}
+html[data-motion='on'] .home-directory > a::before {
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .home-directory > a:hover,
 .home-directory > a:focus-visible {
@@ -444,7 +463,77 @@ html[data-motion='on'] .home-directory a:hover > span:last-child {
 .page-content {
   overflow-wrap: anywhere;
 }
+.page-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), #b89b5f);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+.return-top {
+  position: fixed;
+  left: max(18px, env(safe-area-inset-left));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--paper);
+  box-shadow: 0 4px 18px #283c3210;
+  color: var(--ink);
+  font: 12px/1.6 var(--serif);
+}
+.return-top > span:first-child {
+  color: var(--red);
+  font-size: 20px;
+}
+.return-top:hover {
+  border-color: var(--red);
+}
+.return-top[hidden],
+.modal-open .return-top,
+.modal-open .page-progress,
+body:has(#motion-panel[open]) .return-top {
+  display: none;
+}
+html[data-motion='on'] .return-top {
+  animation: return-top-appear 240ms ease-out both;
+  transition:
+    border-color 200ms,
+    box-shadow 200ms;
+}
+@keyframes return-top-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 @media (max-width: 640px) {
+  .header nav.open {
+    max-height: calc(100dvh - 100px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .return-top {
+    left: max(12px, env(safe-area-inset-left));
+    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 60px);
+    padding-inline: 12px;
+    gap: 7px;
+  }
   .library-toolbar {
     flex-wrap: wrap;
   }

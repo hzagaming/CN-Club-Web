@@ -88,7 +88,7 @@ matchMedia('(max-width: 640px)').addEventListener('change', closeMenu);
 element('#year').textContent = String(new Date().getFullYear());
 // Keep old section and article bookmarks usable after the move to separate pages.
 export function getLegacyDestination(url) {
-    if (!['/', '/index.html'].includes(url.pathname) && !url.pathname.endsWith('/index.html'))
+    if (!url.pathname.endsWith('/') && !url.pathname.endsWith('/index.html'))
         return null;
     const routes = {
         '#about': 'about.html',
@@ -111,3 +111,54 @@ addEventListener('hashchange', followLegacyLink);
 followLegacyLink();
 if (new URL(location.href).searchParams.get('login') === '1')
     openDialog('login-dialog');
+// A quiet reading marker; update only after scrolling or a layout change.
+const progress = document.createElement('div');
+progress.className = 'page-progress';
+progress.setAttribute('aria-hidden', 'true');
+const returnTop = document.createElement('button');
+returnTop.type = 'button';
+returnTop.className = 'return-top';
+returnTop.innerHTML = '<span aria-hidden="true">↑</span><span>回卷首</span>';
+returnTop.setAttribute('aria-label', '返回页面顶部');
+returnTop.hidden = true;
+document.body.append(progress, returnTop);
+let progressFrame = 0;
+function updateProgress() {
+    progressFrame = 0;
+    const distance = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    const position = Math.max(0, Math.min(scrollY, distance));
+    progress.style.transform = `scaleX(${distance ? position / distance : 0})`;
+    const shouldHide = position < Math.min(400, innerHeight / 2);
+    // Keep the focused control in place until focus moves away.
+    returnTop.hidden = shouldHide && document.activeElement !== returnTop;
+}
+function scheduleProgress() {
+    if (!progressFrame && !document.hidden)
+        progressFrame = requestAnimationFrame(updateProgress);
+}
+addEventListener('scroll', scheduleProgress, { passive: true });
+addEventListener('resize', scheduleProgress);
+addEventListener('pageshow', scheduleProgress);
+returnTop.addEventListener('blur', scheduleProgress);
+if ('ResizeObserver' in window)
+    new ResizeObserver(scheduleProgress).observe(document.body);
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        cancelAnimationFrame(progressFrame);
+        progressFrame = 0;
+    }
+    else
+        scheduleProgress();
+});
+returnTop.addEventListener('click', () => {
+    const heading = document.querySelector('main h1');
+    if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+    }
+    scrollTo({
+        top: 0,
+        behavior: document.documentElement.dataset.motion === 'on' ? 'smooth' : 'instant',
+    });
+});
+scheduleProgress();
