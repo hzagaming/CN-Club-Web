@@ -15,10 +15,10 @@
 
     <link rel="stylesheet" href="choreography.css?v=9" />
 
-    <script type="module" src="js/main.js?v=8"></script>
+    <script type="module" src="js/main.js?v=10"></script>
     <script type="module" src="js/cards.js?v=8"></script>
     <script type="module" src="js/choreography.js?v=8"></script>
-    <link rel="stylesheet" href="pages.css?v=9" />
+    <link rel="stylesheet" href="pages.css?v=10" />
     <link rel="stylesheet" href="transitions.css?v=8" />
   </head>
   <body class="interior-page" data-page="writings" id="top">
@@ -135,30 +135,44 @@
       <small>© <span id="year"></span> 琢光中文文学社</small>
     </footer>
     <dialog id="reader-dialog" class="reader-dialog" aria-labelledby="reader-title">
-      <button class="dialog-close" data-close="" aria-label="关闭文章">×</button>
-      <p class="eyebrow" id="reader-category"></p>
-      <h2 id="reader-title"></h2>
-      <div class="reader-tools">
-        <button id="reading-direction" type="button" aria-pressed="false">切换竖排阅读</button
-        ><button id="reading-size" type="button" aria-pressed="false">放大字号</button>
+      <div class="reader-topbar">
+        <span>琢光文苑 · 展卷</span>
+        <button class="dialog-close" data-close="" aria-label="关闭文章">×</button>
       </div>
-      <div class="reader-library">
-        <label for="reader-contents">卷内目录</label
-        ><select id="reader-contents" aria-label="选择文章"></select
-        ><button id="save-writing" type="button" aria-pressed="false">收入藏书</button
-        ><button id="share-writing" type="button">复制篇目链接</button>
-      </div>
-      <p id="library-feedback" class="library-feedback" role="status" aria-live="polite"></p>
-      <div id="share-fallback" hidden="">
-        <label for="share-url">复制未成功，请手动复制下方链接</label
-        ><input id="share-url" readonly="" type="url" />
-      </div>
-      <p class="reader-byline">琢光编辑部 · 网站示范篇目</p>
-      <p class="reading-hint" id="reading-hint">横排阅读 · 可调整字号</p>
-      <div id="reader-body" tabindex="0" role="region" aria-label="文章正文"></div>
-      <div class="reader-pagination">
-        <button id="previous-writing" type="button">← 上一篇</button
-        ><span id="reader-position"></span><button id="next-writing" type="button">下一篇 →</button>
+      <div class="reader-content">
+        <p class="eyebrow" id="reader-category"></p>
+        <h2 id="reader-title"></h2>
+        <p class="reader-byline">琢光编辑部 · 网站示范篇目</p>
+        <p id="reader-meta" class="reader-meta"></p>
+        <details class="reader-settings">
+          <summary>阅读设置与目录 <span aria-hidden="true">⌄</span></summary>
+          <div class="reader-settings-content">
+            <div class="reader-tools">
+              <button id="reading-direction" type="button" aria-pressed="false">切换竖排阅读</button
+              ><button id="reading-size" type="button" aria-pressed="false">放大字号</button>
+            </div>
+            <div class="reader-library">
+              <label for="reader-contents">卷内目录</label
+              ><select id="reader-contents" aria-label="选择文章"></select>
+            </div>
+          </div>
+        </details>
+        <p class="reading-hint" id="reading-hint">横排阅读 · 可调整字号</p>
+        <div id="reader-body" tabindex="0" role="region" aria-label="文章正文"></div>
+        <div class="reader-quick-actions reader-library">
+          <button id="save-writing" type="button" aria-pressed="false">收入藏书</button
+          ><button id="share-writing" type="button">复制篇目链接</button>
+        </div>
+        <p id="library-feedback" class="library-feedback" role="status" aria-live="polite"></p>
+        <div id="share-fallback" hidden="">
+          <label for="share-url">复制未成功，请手动复制下方链接</label
+          ><input id="share-url" readonly="" type="url" />
+        </div>
+        <div class="reader-pagination">
+          <button id="previous-writing" type="button">← 上一篇</button
+          ><span id="reader-position"></span
+          ><button id="next-writing" type="button">下一篇 →</button>
+        </div>
       </div>
     </dialog>
     <dialog id="login-dialog" aria-labelledby="login-title">

@@ -216,6 +216,9 @@ function showWriting(index, address = 'replace') {
     const item = writings[index];
     element('#reader-category').textContent = `${item.label} · 示范作品`;
     element('#reader-title').textContent = item.title;
+    const length = (item.body.join('').match(/[\p{L}\p{N}]/gu) || []).length;
+    element('#reader-meta').textContent =
+        `${length} 字 · 约 ${Math.max(1, Math.ceil(length / 250))} 分钟阅读`;
     readerBody.replaceChildren(...item.body.map((text) => {
         const p = document.createElement('p');
         p.textContent = text;
@@ -323,8 +326,11 @@ writings.forEach((item, index) => {
 });
 contents.addEventListener('change', () => {
     const index = writings.findIndex((item) => item.id === contents.value);
-    if (index !== -1)
+    if (index !== -1) {
         showWriting(index);
+        element('.reader-settings').open = false;
+        readerBody.focus({ preventScroll: true });
+    }
 });
 element('#save-writing').addEventListener('click', () => {
     const id = writings[currentWriting].id;

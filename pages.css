@@ -572,3 +572,138 @@ html[data-motion='on'] .return-top {
     max-width: 100%;
   }
 }
+
+/* Keep the text in view; secondary reading controls unfold only when requested. */
+.reader-dialog {
+  padding: 0;
+  scroll-padding-top: 72px;
+  scrollbar-width: thin;
+  scrollbar-color: #9d8963 var(--paper);
+}
+.reader-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 60px;
+  padding: 6px 20px 6px 32px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.reader-topbar > span {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--muted);
+}
+.reader-topbar .dialog-close {
+  position: static;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  font-size: 28px;
+}
+.reader-content {
+  padding: 28px 42px 32px;
+  overflow-wrap: anywhere;
+}
+.reader-content h2 {
+  margin: 12px 0;
+  padding: 0;
+  text-wrap: balance;
+}
+.reader-content .reader-byline {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+.reader-content .reader-meta {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 4px 0 20px;
+  font-variant-numeric: tabular-nums;
+}
+.reader-settings {
+  border-block: 1px solid var(--line);
+}
+.reader-settings summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  gap: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+}
+.reader-settings summary::-webkit-details-marker {
+  display: none;
+}
+.reader-settings summary > span {
+  font-size: 20px;
+  color: var(--red);
+}
+.reader-settings[open] summary > span {
+  transform: rotate(180deg);
+}
+.reader-settings-content {
+  padding: 4px 0 16px;
+}
+.reader-settings .reader-library {
+  padding-top: 0;
+  border: 0;
+  margin-bottom: 0;
+}
+.reader-content .reader-quick-actions {
+  border: 0;
+  padding: 0;
+  margin: 12px 0;
+  gap: 10px;
+}
+.reader-content .reading-hint {
+  margin: 16px 0 12px;
+  font-size: 11px;
+}
+.reader-content #reader-body {
+  margin-top: 0;
+}
+html[data-motion='on'] .reader-settings summary > span {
+  transition: transform 220ms ease;
+}
+html[data-motion='on'] .reader-settings[open] .reader-settings-content {
+  animation: reader-settings-unfold 240ms ease-out both;
+}
+@keyframes reader-settings-unfold {
+  from {
+    opacity: 0.6;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 640px) {
+  .reader-dialog {
+    padding: 0;
+  }
+  .reader-topbar {
+    padding-inline: 20px 12px;
+    min-height: 56px;
+  }
+  .reader-content {
+    padding: 20px 22px 28px;
+  }
+  .reader-content h2 {
+    font-size: 27px;
+    line-height: 1.5;
+  }
+  .reader-content .reader-meta {
+    margin-bottom: 14px;
+  }
+  .reader-settings .reader-library label {
+    flex-basis: 100%;
+  }
+}

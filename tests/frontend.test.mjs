@@ -362,3 +362,32 @@ test('library changes expose stable card identities with before/after layout eve
     d.window.close();
   }
 });
+
+test('reader directory returns to the text and preserves reading preferences when changing articles', () => {
+  const d = page('http://localhost/writings.html?article=moon');
+  try {
+    const w = d.window;
+    w.eval(source);
+    const doc = w.document;
+    const settings = doc.querySelector('.reader-settings');
+    assert.equal(settings.open, false);
+    assert.match(doc.querySelector('#reader-meta').textContent, /^\d+ 字 · 约 \d+ 分钟阅读$/);
+    settings.open = true;
+    doc.querySelector('#reading-size').click();
+    const contents = doc.querySelector('#reader-contents');
+    contents.focus();
+    contents.value = 'letter';
+    contents.dispatchEvent(new w.Event('change'));
+    assert.equal(settings.open, false);
+    assert.match(doc.querySelector('#reader-title').textContent, /未寄出的信/);
+    assert.equal(new URL(w.location.href).searchParams.get('article'), 'letter');
+    assert.equal(doc.activeElement, doc.querySelector('#reader-body'));
+    assert.equal(doc.querySelector('#reader-body').classList.contains('large-type'), true);
+    assert.equal(doc.querySelector('#next-writing').disabled, true);
+    doc.querySelector('#save-writing').click();
+    assert.deepEqual(JSON.parse(w.localStorage.getItem('zhuoguang-saved')), ['letter']);
+    assert.equal(settings.open, false, 'saving should not unfold the secondary controls');
+  } finally {
+    d.window.close();
+  }
+});
