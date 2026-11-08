@@ -730,3 +730,163 @@ html[data-motion='on'] .reader-settings[open] .reader-settings-content {
 .writing-card .card-copy > p {
   overflow-wrap: anywhere;
 }
+
+/* One compact browsing panel; every category remains visible on a phone. */
+.page-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 12px;
+}
+.page-heading .page-title-row h1 {
+  margin: 0;
+}
+.compose-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  color: var(--red);
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+}
+.compose-link:hover {
+  border-color: var(--red);
+}
+.library-controls {
+  padding: 22px 24px 16px;
+  border: 1px solid #d4d1bd;
+  border-radius: 4px;
+  background: #e9e8db66;
+}
+.library-controls .writing-search {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.library-controls .search-field {
+  max-width: none;
+  flex: 1;
+  min-width: 0;
+}
+.library-controls .search-field input {
+  min-height: 48px;
+  font-size: 16px;
+  background: #faf7ef;
+  border-radius: 3px;
+}
+.library-controls .search-field:focus-within input {
+  border-color: var(--red);
+  outline: 2px solid #9e352926;
+  outline-offset: 2px;
+}
+.library-controls .filters {
+  gap: 8px;
+  padding: 0;
+}
+.library-controls .filters button {
+  border-radius: 3px;
+  min-height: 44px;
+}
+.library-controls .filters button:hover:not(.active) {
+  background: #ddd9c7;
+}
+.filter-short {
+  display: none;
+}
+.library-controls .library-toolbar {
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+}
+.library-controls .results-count {
+  min-width: 0;
+  flex: 1;
+  letter-spacing: 0;
+  font-size: 11px;
+}
+.library-controls .library-view-switch {
+  background: #f6f2e7;
+  margin-left: 0;
+}
+.library-controls .library-view-switch button {
+  padding-inline: 12px;
+}
+html[data-motion='on'] .library-controls .filters button,
+html[data-motion='on'] .compose-link {
+  transition:
+    background-color 180ms,
+    color 180ms,
+    border-color 180ms;
+}
+@media (max-width: 640px) {
+  body[data-page='writings'] .page-heading {
+    margin-bottom: 8px;
+    padding-bottom: 20px;
+  }
+  .page-title-row {
+    gap: 8px;
+  }
+  .compose-link {
+    gap: 8px;
+    font-size: 12px;
+  }
+  .library-controls {
+    padding: 14px 12px 12px;
+  }
+  .library-controls .writing-search label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .library-controls .filters {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    overflow: visible;
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .library-controls .filters button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+    padding: 8px 2px;
+    font-size: 12px;
+    margin: 0;
+    border: 0;
+  }
+  .library-controls .filter-long {
+    display: none;
+  }
+  .library-controls .filter-short {
+    display: inline;
+  }
+  .library-controls #saved-count {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  .library-controls .library-toolbar {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  .library-controls .library-view-switch button {
+    padding-inline: 10px;
+  }
+  .writing-grid:not([data-view='list']) .card-art {
+    height: 180px;
+  }
+  .writing-grid:not([data-view='list']) .card-art > span {
+    font-size: 28px;
+    letter-spacing: 6px;
+    padding: 8px;
+    white-space: nowrap;
+  }
+}

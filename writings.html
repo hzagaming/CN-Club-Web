@@ -18,7 +18,7 @@
     <script type="module" src="js/main.js?v=11"></script>
     <script type="module" src="js/cards.js?v=8"></script>
     <script type="module" src="js/choreography.js?v=8"></script>
-    <link rel="stylesheet" href="pages.css?v=11" />
+    <link rel="stylesheet" href="pages.css?v=12" />
     <link rel="stylesheet" href="transitions.css?v=8" />
   </head>
   <body class="interior-page" data-page="writings" id="top">
@@ -50,55 +50,73 @@
       </nav>
       <header class="page-heading">
         <p class="eyebrow">琢光中文文学社</p>
-        <h1 id="page-title">琢光文苑</h1>
+        <div class="page-title-row">
+          <h1 id="page-title">琢光文苑</h1>
+          <a class="compose-link" href="write.html"
+            >执笔写新篇 <span aria-hidden="true">↗</span></a
+          >
+        </div>
         <p>字字有来处，篇篇见少年。读一篇文字，留一份心光。</p>
       </header>
       <section id="writings" class="writings section">
-        <div class="page-actions">
-          <span>文苑试阅 · 示范篇目</span><a href="write.html">我也想写一篇 ↗</a>
-        </div>
-
-        <div class="writing-search">
-          <label for="writing-search">寻文</label>
-          <div class="search-field">
-            <input
-              id="writing-search"
-              type="search"
-              placeholder="搜索篇名、体裁或文字…"
-              maxlength="100"
-              autocomplete="off"
-              aria-controls="writing-grid"
-            /><button id="clear-search" type="button" hidden="">清除</button>
+        <div class="library-controls">
+          <div class="writing-search">
+            <label for="writing-search">寻文</label>
+            <div class="search-field">
+              <input
+                id="writing-search"
+                type="search"
+                placeholder="搜索篇名、正文"
+                maxlength="100"
+                autocomplete="off"
+                aria-controls="writing-grid"
+              /><button id="clear-search" type="button" hidden="">清除</button>
+            </div>
           </div>
-        </div>
-        <div class="filters" role="group" aria-label="按体裁筛选作品">
-          <button class="active" data-filter="all" aria-pressed="true">全部篇目</button
-          ><button data-filter="散文" aria-pressed="false">散文随笔</button
-          ><button data-filter="诗歌" aria-pressed="false">诗词短章</button
-          ><button data-filter="故事" aria-pressed="false">小说故事</button
-          ><button data-filter="saved" aria-pressed="false">
-            我的藏书 <span id="saved-count">0</span>
-          </button>
-        </div>
-        <div class="library-toolbar">
-          <p id="writing-results" class="results-count" role="status" aria-live="polite"></p>
-          <div class="library-view-switch" role="group" aria-label="文苑显示方式">
-            <button
-              type="button"
-              data-library-view="cards"
-              aria-pressed="true"
-              aria-controls="writing-grid"
-            >
-              封面
-            </button>
-            <button
-              type="button"
-              data-library-view="list"
+          <div class="filters" role="group" aria-label="按体裁筛选作品">
+            <button class="active" data-filter="all" aria-pressed="true" aria-label="全部篇目">
+              <span class="filter-long">全部篇目</span
+              ><span class="filter-short" aria-hidden="true">全部</span></button
+            ><button data-filter="散文" aria-pressed="false" aria-label="散文随笔">
+              <span class="filter-long">散文随笔</span
+              ><span class="filter-short" aria-hidden="true">散文</span></button
+            ><button data-filter="诗歌" aria-pressed="false" aria-label="诗词短章">
+              <span class="filter-long">诗词短章</span
+              ><span class="filter-short" aria-hidden="true">诗歌</span></button
+            ><button data-filter="故事" aria-pressed="false" aria-label="小说故事">
+              <span class="filter-long">小说故事</span
+              ><span class="filter-short" aria-hidden="true">故事</span></button
+            ><button
+              data-filter="saved"
               aria-pressed="false"
-              aria-controls="writing-grid"
+              aria-label="我的藏书"
+              aria-describedby="saved-count"
             >
-              目录
+              <span class="filter-long">我的藏书</span
+              ><span class="filter-short" aria-hidden="true">藏书</span>
+              <span id="saved-count">0</span>
             </button>
+          </div>
+          <div class="library-toolbar">
+            <p id="writing-results" class="results-count" role="status" aria-live="polite"></p>
+            <div class="library-view-switch" role="group" aria-label="文苑显示方式">
+              <button
+                type="button"
+                data-library-view="cards"
+                aria-pressed="true"
+                aria-controls="writing-grid"
+              >
+                封面
+              </button>
+              <button
+                type="button"
+                data-library-view="list"
+                aria-pressed="false"
+                aria-controls="writing-grid"
+              >
+                目录
+              </button>
+            </div>
           </div>
         </div>
         <div id="writing-grid" class="writing-grid"></div>
