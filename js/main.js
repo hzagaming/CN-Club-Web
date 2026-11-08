@@ -112,17 +112,63 @@ function commitSearch() {
     updateLibraryAddress();
     renderWritings();
 }
+// Map normalized matches back to the original text, preserving full-width punctuation.
+function findSearchMatch(text, query) {
+    if (!query)
+        return null;
+    let normalized = '';
+    let offset = 0;
+    const positions = [];
+    for (const character of text) {
+        const part = character.normalize('NFKC').toLocaleLowerCase();
+        for (let i = 0; i < part.length; i++)
+            positions.push({ start: offset, end: offset + character.length });
+        normalized += part;
+        offset += character.length;
+    }
+    const index = normalized.indexOf(query);
+    return index < 0
+        ? null
+        : { start: positions[index].start, end: positions[index + query.length - 1].end };
+}
+function highlightSearch(target, text, query) {
+    const match = findSearchMatch(text, query);
+    target.replaceChildren();
+    if (!match) {
+        target.textContent = text;
+        return;
+    }
+    const mark = document.createElement('mark');
+    mark.textContent = text.slice(match.start, match.end);
+    target.append(text.slice(0, match.start), mark, text.slice(match.end));
+}
+function searchPreview(item, query) {
+    if (!query || [item.title, item.label, item.excerpt].some((text) => findSearchMatch(text, query)))
+        return { text: item.excerpt, fromBody: false };
+    for (const paragraph of item.body) {
+        const match = findSearchMatch(paragraph, query);
+        if (!match)
+            continue;
+        const before = [...paragraph.slice(0, match.start)];
+        const after = [...paragraph.slice(match.end)];
+        return {
+            text: (before.length > 28 ? '…' : '') +
+                before.slice(-28).join('') +
+                paragraph.slice(match.start, match.end) +
+                after.slice(0, 44).join('') +
+                (after.length > 44 ? '…' : ''),
+            fromBody: true,
+        };
+    }
+    return { text: item.excerpt, fromBody: false };
+}
 function renderWritings() {
     const query = search.value.trim().normalize('NFKC').toLocaleLowerCase();
     const matches = writings.filter((item) => (currentFilter === 'all' ||
         (currentFilter === 'saved'
             ? savedWritings.has(item.id)
             : item.category === currentFilter)) &&
-        [item.title, item.label, item.excerpt, ...item.body]
-            .join(' ')
-            .normalize('NFKC')
-            .toLocaleLowerCase()
-            .includes(query));
+        [item.title, item.label, item.excerpt, ...item.body].some((text) => !query || findSearchMatch(text, query)));
     document.dispatchEvent(new Event('zhuoguang:layout-before'));
     grid.replaceChildren();
     matches.forEach((item) => {
@@ -131,6 +177,17 @@ function renderWritings() {
         article.dataset.writingId = item.id;
         // All interpolated values below are local editorial constants.
         article.innerHTML = `<div class="card-art art-${item.art}" aria-hidden="true"><span>${item.cover}</span><i class="card-stamp">琢光<br>文藏</i><small class="card-colophon">一纸清欢 · 半卷流年</small></div><div class="card-copy"><span class="card-category">${item.label} · 示范作品</span><h3><button class="card-title" data-read="${item.id}">${item.title}</button></h3><p>${item.excerpt}</p><div class="card-bottom"><span>约一分钟 · 静心读完</span><button class="read-button" data-read="${item.id}" aria-label="阅读${item.title}">阅读全文 ↗</button></div></div>`;
+        highlightSearch(article.querySelector('.card-title'), item.title, query);
+        highlightSearch(article.querySelector('.card-category'), `${item.label} · 示范作品`, query);
+        const preview = searchPreview(item, query);
+        const excerpt = article.querySelector('.card-copy > p');
+        highlightSearch(excerpt, preview.text, query);
+        if (preview.fromBody) {
+            const label = document.createElement('span');
+            label.className = 'search-match-label';
+            label.textContent = '正文命中';
+            excerpt.prepend(label);
+        }
         grid.append(article);
     });
     document.dispatchEvent(new Event('zhuoguang:layout-after'));
@@ -141,6 +198,12 @@ function renderWritings() {
             : '这一页，暂未寻到';
     element('#writing-empty').hidden = matches.length > 0;
     element('#clear-search').hidden = search.value.length === 0;
+    element('#clear-query').hidden = !query;
+    element('#writing-empty p').textContent = query
+        ? '可以清除关键词，保留当前分类；或查看全部篇目。'
+        : currentFilter === 'saved'
+            ? '阅读喜欢的文章后，点击篇末的「收入藏书」，就能在这里重读。'
+            : '试试其他分类，或回到全部篇目。';
     element('#writing-results').textContent =
         `共 ${matches.length} 篇${currentFilter === 'all' ? '文字' : currentFilter === 'saved' ? '藏书' : currentFilter} · 示范篇目`;
 }
@@ -165,11 +228,13 @@ search.addEventListener('input', (event) => {
     if (!event.isComposing)
         commitSearch();
 });
-element('#clear-search').addEventListener('click', () => {
+function clearSearch() {
     search.value = '';
     commitSearch();
     search.focus();
-});
+}
+element('#clear-search').addEventListener('click', clearSearch);
+element('#clear-query').addEventListener('click', clearSearch);
 element('#reset-search').addEventListener('click', () => {
     search.value = '';
     setFilter('all');

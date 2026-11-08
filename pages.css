@@ -707,3 +707,26 @@ html[data-motion='on'] .reader-settings[open] .reader-settings-content {
     flex-basis: 100%;
   }
 }
+
+/* Search keeps the original wording, with a quiet ochre highlight. */
+.writing-card mark {
+  padding: 0 1px;
+  color: var(--ink);
+  background: #e7d7aa;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.search-match-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--red);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+.empty-state .text-button + .text-button {
+  margin-left: 18px;
+}
+.writing-card .card-copy > p {
+  overflow-wrap: anywhere;
+}

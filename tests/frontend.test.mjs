@@ -391,3 +391,55 @@ test('reader directory returns to the text and preserves reading preferences whe
     d.window.close();
   }
 });
+
+test('search previews reveal body matches and safely highlight original punctuation', () => {
+  const d = page();
+  try {
+    const w = d.window;
+    w.eval(source);
+    const doc = w.document;
+    const search = doc.querySelector('#writing-search');
+    const find = (value) => {
+      search.value = value;
+      search.dispatchEvent(new w.Event('input'));
+    };
+    find('先写下来');
+    assert.equal(doc.querySelectorAll('.writing-card').length, 1);
+    assert.equal(doc.querySelector('.card-copy > p mark').textContent, '先写下来');
+    assert.equal(doc.querySelector('.search-match-label').textContent, '正文命中');
+    assert.match(doc.querySelector('.card-copy > p').textContent, /文字会慢慢找到自己的路/);
+    find('向晚,');
+    assert.equal(doc.querySelector('.card-title mark').textContent, '向晚，');
+    assert.equal(doc.querySelector('.search-match-label'), null);
+    find('<img src=x onerror=alert(1)>');
+    assert.equal(doc.querySelectorAll('#writing-grid img').length, 0);
+    assert.equal(doc.querySelector('#writing-empty').hidden, false);
+    doc.querySelector('#clear-query').click();
+    assert.equal(doc.querySelectorAll('.writing-card').length, 3);
+    assert.equal(doc.querySelector('#writing-grid mark'), null);
+    assert.equal(doc.querySelector('.search-match-label'), null);
+    assert.equal(doc.activeElement, search);
+  } finally {
+    d.window.close();
+  }
+});
+
+test('empty search can clear its query without losing the selected genre', () => {
+  const d = page('http://localhost/writings.html?category=poetry&q=不匹配');
+  try {
+    const w = d.window;
+    w.eval(source);
+    const doc = w.document;
+    assert.equal(doc.querySelector('#clear-query').hidden, false);
+    doc.querySelector('#clear-query').click();
+    assert.equal(doc.querySelectorAll('.writing-card').length, 1);
+    assert.equal(doc.querySelector('[data-filter="诗歌"]').getAttribute('aria-pressed'), 'true');
+    assert.equal(new URL(w.location.href).searchParams.get('category'), 'poetry');
+    assert.equal(new URL(w.location.href).searchParams.has('q'), false);
+    doc.querySelector('[data-filter="saved"]').click();
+    assert.match(doc.querySelector('#writing-empty p').textContent, /收入藏书/);
+    assert.equal(doc.querySelector('#clear-query').hidden, true);
+  } finally {
+    d.window.close();
+  }
+});
