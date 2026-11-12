@@ -17,7 +17,7 @@
 
     <script type="module" src="js/site.js?v=9"></script>
     <script type="module" src="js/choreography.js?v=8"></script>
-    <link rel="stylesheet" href="pages.css?v=12" />
+    <link rel="stylesheet" href="pages.css?v=13" />
     <link rel="stylesheet" href="transitions.css?v=8" />
   </head>
   <body class="interior-page" data-page="join" id="top">
@@ -36,9 +36,28 @@
         目 录 <span>☰</span>
       </button>
       <nav id="navigation" aria-label="主导航">
-        <a href="index.html">首页</a><a href="writings.html">文苑</a
-        ><a href="about.html">关于琢光</a><a href="activities.html">雅集</a
-        ><a href="join.html" aria-current="page">加入琢光</a><a href="write.html">创作书斋</a>
+        <a href="index.html"
+          ><span class="nav-chapter" aria-hidden="true">壹</span><span class="nav-label">首页</span
+          ><span class="nav-description">山水开卷</span></a
+        ><a href="writings.html"
+          ><span class="nav-chapter" aria-hidden="true">贰</span><span class="nav-label">文苑</span
+          ><span class="nav-description">读文字 · 藏好文</span></a
+        ><a href="about.html"
+          ><span class="nav-chapter" aria-hidden="true">叁</span
+          ><span class="nav-label">关于琢光</span
+          ><span class="nav-description">琢光名字的由来</span></a
+        ><a href="activities.html"
+          ><span class="nav-chapter" aria-hidden="true">肆</span><span class="nav-label">雅集</span
+          ><span class="nav-description">共读共写共赏</span></a
+        ><a href="join.html" aria-current="page"
+          ><span class="nav-chapter" aria-hidden="true">伍</span
+          ><span class="nav-label">加入琢光</span
+          ><span class="nav-description">让热爱有个归处</span></a
+        ><a href="write.html"
+          ><span class="nav-chapter" aria-hidden="true">陆</span
+          ><span class="nav-label">创作书斋</span
+          ><span class="nav-description">写作服务状态</span></a
+        >
       </nav>
       <button class="login-button" data-login="">社员登录 <span>↗</span></button>
     </header>
@@ -66,13 +85,25 @@
       </section>
       <aside class="page-notice" aria-labelledby="joining-status">
         <h2 id="joining-status">招新渠道正在筹备</h2>
-        <p>招新渠道仍在筹备。已有账号的社员可登录后进入创作书斋，保存或提交作品。</p>
+        <p>招新渠道仍在筹备。在线书斋需账号服务开放后使用；当前可先浏览文苑与投稿指南。</p>
         <p>你可以先准备一篇原创作品，或记下一本想与大家分享的书。期待与你相遇。</p>
         <button class="text-button" type="button" data-login="">已有社员账号？在此登录 →</button>
       </aside>
       <nav class="page-related" aria-label="继续浏览">
-        <a href="writings.html">读一篇文字 ↗</a><a href="guide.html">查看投稿指南 ↗</a
-        ><a href="write.html">进入创作书斋 ↗</a>
+        <p class="related-heading">读到这里，下一页想去哪里？</p>
+        <a href="about.html"
+          ><span class="related-title">认识琢光</span
+          ><span class="related-description">读懂名字背后的心意。</span
+          ><span class="related-arrow" aria-hidden="true">↗</span></a
+        ><a href="writings.html"
+          ><span class="related-title">读一篇文字</span
+          ><span class="related-description">在文苑里，遇见下一份共鸣。</span
+          ><span class="related-arrow" aria-hidden="true">↗</span></a
+        ><a href="guide.html"
+          ><span class="related-title">准备一份来稿</span
+          ><span class="related-description">从选题、署名到投稿须知。</span
+          ><span class="related-arrow" aria-hidden="true">↗</span></a
+        >
       </nav>
     </main>
     <footer class="site-footer">

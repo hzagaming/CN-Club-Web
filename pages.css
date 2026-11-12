@@ -890,3 +890,177 @@ html[data-motion='on'] .compose-link {
     white-space: nowrap;
   }
 }
+
+/* Shared chapter navigation and a deliberate next step at the end of each page. */
+.header .nav-chapter,
+.header .nav-description {
+  display: none;
+}
+.header nav a,
+.header .login-button,
+.header .menu-toggle {
+  min-height: 44px;
+  align-content: center;
+}
+.breadcrumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.page-related {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding-top: 28px;
+}
+.related-heading {
+  grid-column: 1 / -1;
+  margin: 0 0 6px;
+  color: var(--muted);
+  font: 13px/1.8 var(--serif);
+  letter-spacing: 2px;
+}
+.page-related a {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 116px;
+  padding: 24px 44px 24px 22px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, #fffdf570, #e9e1cc40);
+  box-shadow: 0 3px 0 #bbaa8312;
+  color: var(--ink);
+}
+.related-title {
+  font: 500 19px/1.5 var(--serif);
+}
+.related-description {
+  font: 12px/1.8 var(--serif);
+  color: var(--muted);
+}
+.related-arrow {
+  position: absolute;
+  top: 23px;
+  right: 20px;
+  color: var(--red);
+  font-size: 20px;
+}
+.page-related a:is(:hover, :focus-visible) {
+  border-color: var(--red);
+  background-color: #fffaf0;
+  box-shadow: 0 8px 24px #5643240c;
+}
+.site-footer nav {
+  gap: 4px 24px;
+}
+.site-footer nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+}
+.site-footer nav a:is(:hover, :focus-visible) {
+  color: var(--red);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+html[data-motion='on'] .page-related a {
+  transition:
+    background-color 220ms,
+    border-color 220ms,
+    box-shadow 220ms;
+}
+html[data-motion='on'] .related-arrow {
+  transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+html[data-motion='on'] .page-related a:is(:hover, :focus-visible) .related-arrow {
+  transform: translate(3px, -3px);
+}
+@media (max-width: 640px) {
+  .header nav.open {
+    top: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 16px 6% 20px;
+    border-top: 1px solid var(--line);
+  }
+  .header nav a {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-content: center;
+    gap: 5px 7px;
+    min-height: 82px;
+    padding: 12px 10px;
+    white-space: normal;
+    border: 1px solid var(--line);
+    background: #fffaf06b;
+  }
+  .header .nav-chapter {
+    display: block;
+    grid-row: span 2;
+    font: 16px/1.6 var(--serif);
+    color: var(--red);
+  }
+  .header .nav-label {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .header .nav-description {
+    display: block;
+    font-size: 10px;
+    line-height: 1.6;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  .header nav a[aria-current='page'] {
+    border-color: var(--red);
+    background: #a53b2a09;
+  }
+  html[data-motion='on'] .header nav.open a {
+    animation: chapter-unfold 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  html[data-motion='on'] .header nav.open a:nth-child(2n) {
+    animation-delay: 45ms;
+  }
+  html[data-motion='on'] .header nav.open a:nth-child(n + 3) {
+    animation-delay: 90ms;
+  }
+  html[data-motion='on'] .header nav.open a:nth-child(n + 5) {
+    animation-delay: 135ms;
+  }
+  .page-related {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .page-related a {
+    min-height: 92px;
+    padding: 18px 44px 18px 18px;
+    gap: 4px;
+  }
+  .related-title {
+    font-size: 17px;
+  }
+  .related-heading {
+    letter-spacing: 1px;
+  }
+  .site-footer nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 24px;
+    padding-block: 12px;
+    border-block: 1px solid var(--line);
+  }
+}
+@keyframes chapter-unfold {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(-7deg) translateY(-6px);
+    transform-origin: center top;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

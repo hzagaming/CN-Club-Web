@@ -17,7 +17,7 @@
 
     <script type="module" src="js/site.js?v=9"></script>
     <script type="module" src="js/choreography.js?v=8"></script>
-    <link rel="stylesheet" href="pages.css?v=12" />
+    <link rel="stylesheet" href="pages.css?v=13" />
     <link rel="stylesheet" href="transitions.css?v=8" />
   </head>
   <body class="interior-page" data-page="guide" id="top">
@@ -36,9 +36,28 @@
         目 录 <span>☰</span>
       </button>
       <nav id="navigation" aria-label="主导航">
-        <a href="index.html">首页</a><a href="writings.html">文苑</a
-        ><a href="about.html">关于琢光</a><a href="activities.html">雅集</a
-        ><a href="join.html">加入琢光</a><a href="write.html">创作书斋</a>
+        <a href="index.html"
+          ><span class="nav-chapter" aria-hidden="true">壹</span><span class="nav-label">首页</span
+          ><span class="nav-description">山水开卷</span></a
+        ><a href="writings.html"
+          ><span class="nav-chapter" aria-hidden="true">贰</span><span class="nav-label">文苑</span
+          ><span class="nav-description">读文字 · 藏好文</span></a
+        ><a href="about.html"
+          ><span class="nav-chapter" aria-hidden="true">叁</span
+          ><span class="nav-label">关于琢光</span
+          ><span class="nav-description">琢光名字的由来</span></a
+        ><a href="activities.html"
+          ><span class="nav-chapter" aria-hidden="true">肆</span><span class="nav-label">雅集</span
+          ><span class="nav-description">共读共写共赏</span></a
+        ><a href="join.html"
+          ><span class="nav-chapter" aria-hidden="true">伍</span
+          ><span class="nav-label">加入琢光</span
+          ><span class="nav-description">让热爱有个归处</span></a
+        ><a href="write.html"
+          ><span class="nav-chapter" aria-hidden="true">陆</span
+          ><span class="nav-label">创作书斋</span
+          ><span class="nav-description">写作服务状态</span></a
+        >
       </nav>
       <button class="login-button" data-login="">社员登录 <span>↗</span></button>
     </header>
@@ -72,7 +91,7 @@
             <details>
               <summary>现在可以在线写作或报名吗？</summary>
               <p>
-                社员登录后可进入创作书斋，保存草稿或提交至服务端稿箱。提交不代表录用，稿件不会自动公开。招新报名与编辑审阅后台尚未开放。
+                当前网站可阅读与收藏示范作品，在线写作需账号服务连接后才能使用。服务开放后，社员可登录书斋保存或提交稿件；提交不代表录用，也不会自动公开。招新报名尚未开放。
               </p>
             </details>
             <details>
@@ -91,8 +110,20 @@
         </div>
       </section>
       <nav class="page-related" aria-label="继续浏览">
-        <a href="writings.html">读一篇文字 ↗</a><a href="guide.html">查看投稿指南 ↗</a
-        ><a href="write.html">进入创作书斋 ↗</a>
+        <p class="related-heading">读到这里，下一页想去哪里？</p>
+        <a href="writings.html"
+          ><span class="related-title">读一篇文字</span
+          ><span class="related-description">在文苑里，遇见下一份共鸣。</span
+          ><span class="related-arrow" aria-hidden="true">↗</span></a
+        ><a href="join.html"
+          ><span class="related-title">与琢光同行</span
+          ><span class="related-description">了解加入方式与筹备进展。</span
+          ><span class="related-arrow" aria-hidden="true">↗</span></a
+        ><a href="write.html"
+          ><span class="related-title">进入创作书斋</span
+          ><span class="related-description">查看账号与写作服务状态。</span
+          ><span class="related-arrow" aria-hidden="true">↗</span></a
+        >
       </nav>
     </main>
     <footer class="site-footer">
